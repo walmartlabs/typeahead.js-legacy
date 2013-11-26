@@ -31,6 +31,8 @@ var Transport = (function() {
       cache: o.cache,
       timeout: o.timeout,
       dataType: o.dataType || 'json',
+      jsonp: o.jsonp,
+      jsonpCallback: o.jsonpCallback,
       beforeSend: o.beforeSend
     };
 

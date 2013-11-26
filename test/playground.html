@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="vendor/jquery-1.9.1.js"></script>
+    <script src="vendor/jquery-1.10.2.min.js"></script>
     <script src="../dist/typeahead.js"></script>
 
     <style>
@@ -52,6 +52,7 @@
     <script>
       $('.states').typeahead({
         valueKey: 'state',
+        highlight: true,
         minLength: 3,
         local: [
           "Alabama",

@@ -134,6 +134,57 @@
         },
         noop: function() {}
     };
+    var bearhug = function(doc) {
+        var defaults = {
+            node: null,
+            pattern: null,
+            tagName: "strong",
+            className: null,
+            wordsOnly: false,
+            caseSensitive: false
+        };
+        return function bearhug(o) {
+            var regex;
+            o = utils.mixin({}, defaults, o);
+            if (!o.node || !o.pattern) {
+                throw new Error("both node and pattern must be set");
+            }
+            o.pattern = utils.isArray(o.pattern) ? o.pattern : [ o.pattern ];
+            regex = getRegex(o.pattern, o.caseSensitive, o.wordsOnly);
+            traverse(o.node, bearhugTextNode);
+            function bearhugTextNode(textNode) {
+                var match, patternNode;
+                if (match = regex.exec(textNode.data)) {
+                    wrapperNode = doc.createElement(o.tagName);
+                    o.className && (wrapperNode.className = o.className);
+                    patternNode = textNode.splitText(match.index);
+                    patternNode.splitText(match[0].length);
+                    wrapperNode.appendChild(patternNode.cloneNode(true));
+                    textNode.parentNode.replaceChild(wrapperNode, patternNode);
+                }
+                return !!match;
+            }
+            function traverse(el, bearhugTextNode) {
+                var childNode, TEXT_NODE_TYPE = 3;
+                for (var i = 0; i < el.childNodes.length; i++) {
+                    childNode = el.childNodes[i];
+                    if (childNode.nodeType === TEXT_NODE_TYPE) {
+                        i += bearhugTextNode(childNode) ? 1 : 0;
+                    } else {
+                        traverse(childNode, bearhugTextNode);
+                    }
+                }
+            }
+        };
+        function getRegex(patterns, caseSensitive, wordsOnly) {
+            var escapedPatterns = [], regexStr;
+            for (var i = 0; i < patterns.length; i++) {
+                escapedPatterns.push(utils.escapeRegExChars(patterns[i]));
+            }
+            regexStr = wordsOnly ? "\\b(" + escapedPatterns.join("|") + ")\\b" : "(" + escapedPatterns.join("|") + ")";
+            return caseSensitive ? new RegExp(regexStr) : new RegExp(regexStr, "i");
+        }
+    }(window.document);
     var EventTarget = function() {
         var eventSplitter = /\s+/;
         return {
@@ -307,6 +358,8 @@
                 cache: o.cache,
                 timeout: o.timeout,
                 dataType: o.dataType || "json",
+                jsonp: o.jsonp,
+                jsonpCallback: o.jsonpCallback,
                 beforeSend: o.beforeSend
             };
             this._get = (/^throttle$/i.test(o.rateLimitFn) ? utils.throttle : utils.debounce)(this._get, o.rateLimitWait || 300);
@@ -388,6 +441,7 @@
             this.footer = o.footer;
             this.valueKey = o.valueKey || "value";
             this.template = compileTemplate(o.template, o.engine, this.valueKey);
+            this.highlight = !!o.highlight;
             this.local = o.local;
             this.prefetch = o.prefetch;
             this.remote = o.remote;
@@ -419,7 +473,12 @@
                     });
                     deferred = $.Deferred().resolve();
                 } else {
-                    deferred = $.getJSON(o.url).done(processPrefetchData);
+                    deferred = $.ajax({
+                        type: "get",
+                        url: o.url,
+                        dataType: o.dataType || "json",
+                        beforeSend: o.beforeSend
+                    }).done(processPrefetchData);
                 }
                 return deferred;
                 function processPrefetchData(data) {
@@ -705,7 +764,7 @@
             this.isOpen = false;
             this.isEmpty = true;
             this.isMouseOverDropdown = false;
-            this.$menu = $(o.menu).on("mouseenter.tt", this._handleMouseenter).on("mouseleave.tt", this._handleMouseleave).on("click.tt", ".tt-suggestion", this._handleSelection).on("mouseover.tt", ".tt-suggestion", this._handleMouseover);
+            this.$menu = $(o.menu).on("mouseenter.tt", this._handleMouseenter).on("mouseleave.tt", this._handleMouseleave).on("click.tt", ".tt-suggestion", this._handleSelection).on("mouseover.tt", ".tt-suggestion", this._handleSuggestionMouseover).on("mouseleave.tt", ".tt-suggestion", this._handleSuggestionMouseleave);
         }
         utils.mixin(DropdownView.prototype, EventTarget, {
             _handleMouseenter: function() {
@@ -714,14 +773,18 @@
             _handleMouseleave: function() {
                 this.isMouseOverDropdown = false;
             },
-            _handleMouseover: function($e) {
+            _handleSelection: function($e) {
+                var $suggestion = $($e.currentTarget);
+                this.trigger("suggestionSelected", extractSuggestion($suggestion));
+            },
+            _handleSuggestionMouseover: function($e) {
                 var $suggestion = $($e.currentTarget);
                 this._getSuggestions().removeClass("tt-is-under-cursor");
                 $suggestion.addClass("tt-is-under-cursor");
             },
-            _handleSelection: function($e) {
+            _handleSuggestionMouseleave: function($e) {
                 var $suggestion = $($e.currentTarget);
-                this.trigger("suggestionSelected", extractSuggestion($suggestion));
+                $suggestion.removeClass("tt-is-under-cursor");
             },
             _show: function() {
                 this.$menu.css("display", "block");
@@ -812,7 +875,7 @@
                 var $suggestion = this._getSuggestions().first();
                 return $suggestion.length > 0 ? extractSuggestion($suggestion) : null;
             },
-            renderSuggestions: function(dataset, suggestions) {
+            renderSuggestions: function(dataset, suggestions, query) {
                 var datasetClassName = "tt-dataset-" + dataset.name, wrapper = '<div class="tt-suggestion">%body</div>', compiledHtml, $suggestionsList, $dataset = this.$menu.find("." + datasetClassName), elBuilder, fragment, $el;
                 if ($dataset.length === 0) {
                     $suggestionsList = $(html.suggestionsList).css(css.suggestionsList);
@@ -832,6 +895,10 @@
                             $(this).css(css.suggestionChild);
                         });
                         fragment.appendChild($el[0]);
+                    });
+                    dataset.highlight && bearhug({
+                        node: fragment,
+                        pattern: query
                     });
                     $dataset.show().find(".tt-suggestions").html(fragment);
                 } else {
@@ -993,8 +1060,8 @@
                 }
                 utils.each(this.datasets, function(i, dataset) {
                     dataset.getSuggestions(query, function(suggestions) {
-                        if (query === that.inputView.getQuery()) {
-                            that.dropdownView.renderSuggestions(dataset, suggestions);
+                        if (that.$node && query === that.inputView.getQuery()) {
+                            that.dropdownView.renderSuggestions(dataset, suggestions, query);
                         }
                     });
                 });

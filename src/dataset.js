@@ -31,6 +31,9 @@ var Dataset = (function() {
     this.valueKey = o.valueKey || 'value';
     this.template = compileTemplate(o.template, o.engine, this.valueKey);
 
+    //highlight
+    this.highlight = !!o.highlight;
+
     // used then deleted in #initialize
     this.local = o.local;
     this.prefetch = o.prefetch;
@@ -87,7 +90,12 @@ var Dataset = (function() {
       }
 
       else {
-        deferred = $.getJSON(o.url).done(processPrefetchData);
+        deferred = $.ajax({
+          type: 'get',
+          url: o.url,
+          dataType: o.dataType || 'json',
+          beforeSend: o.beforeSend
+        }).done(processPrefetchData);
       }
 
       return deferred;

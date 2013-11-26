@@ -15,6 +15,16 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 ---
 
+### Nov 25, 2013
+* add jsonp support
+* add highlighter with bearhug [317]
+* add option to disable localstorage
+* add custom event typeahead:suggestionsRendered
+* update jquery depedency to 10.2 to comply with Atlas, update grunt-contrib-jasmine lib to 0.5
+* add playground2.html for testing with walmart.com
+* add Unit testing specs for new features above
+
+
 ### 0.9.3 June 24, 2013
 
 * Ensure cursor visibility in menus with overflow. [#209][209]
