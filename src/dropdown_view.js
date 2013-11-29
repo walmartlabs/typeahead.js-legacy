@@ -251,8 +251,8 @@ var DropdownView = (function() {
           fragment.appendChild($el[0]);
         });
 
-        // if highligting is enabled, let bearhug do its thing
-        dataset.highlight && highlight({ node: fragment, pattern: query });
+        // highligting if it's on
+        dataset.highlight && new Highlighter({ el: fragment, pattern: query });
 
         // show this dataset in case it was previously empty
         // and render the new suggestions
@@ -264,7 +264,7 @@ var DropdownView = (function() {
         this.clearSuggestions(dataset.name);
       }
 
-      this.trigger('suggestionsRendered');
+      this.trigger('suggestionsRendered'); //TODO: add custom event hook
     },
 
     clearSuggestions: function(datasetName) {

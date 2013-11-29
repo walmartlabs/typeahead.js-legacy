@@ -1,94 +1,94 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="vendor/jquery-1.10.2.min.js"></script>
-    <script src="vendor/underscore-1.5.2.js"></script>
-    <script src="../dist/typeahead.js"></script>
+<head>
+  <script src="vendor/jquery-1.10.2.min.js"></script>
+  <script src="vendor/underscore-1.5.2.js"></script>
+  <script src="../dist/typeahead.js"></script>
 
-    <style>
-      .container {
-        width: 800px;
-        margin: 50px auto;
-      }
+  <style>
+    .container {
+      width: 800px;
+      margin: 50px auto;
+    }
 
-      .typeahead-wrapper {
-        display: block;
-        margin: 50px 0;
-      }
+    .typeahead-wrapper {
+      display: block;
+      margin: 50px 0;
+    }
 
-      .tt-dropdown-menu {
-        background-color: #fff;
-        border: 1px solid #000;
-      }
+    .tt-dropdown-menu {
+      background-color: #fff;
+      border: 1px solid #000;
+    }
 
-      .tt-suggestion.tt-is-under-cursor {
-        background-color: #ccc;
-      }
+    .tt-suggestion.tt-is-under-cursor {
+      background-color: #ccc;
+    }
 
-      .triggered-events {
-        float: right;
-        width: 500px;
-        height: 300px;
-      }
-      .tt-hint {
-        display: none;
-      }
-    </style>
-  </head>
+    .triggered-events {
+      float: right;
+      width: 500px;
+      height: 300px;
+    }
 
-  <body>
-    <div class="container">
-      <div class="typeahead-wrapper">
-        <label for="search">Search:</label>
-        <input
-          class="searchbar-input js-searchbar-input js-instant-placeholder"
-          type="search" name="search" id="search" placeholder="Search"
-          value="">
-      </div>
+    .tt-hint {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="typeahead-wrapper">
+      <label for="search">Search:</label>
+      <input
+        class="searchbar-input js-searchbar-input js-instant-placeholder"
+        type="text" name="search" id="search" placeholder="Search"
+        value="">
     </div>
+  </div>
 
-    <script>
-      $('#search').typeahead({
-        name: "suggestion",
-        highlight: true,
-        remote: {
-          url: "http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/",
-          replace: function (url, uriEncodedQuery) {
-            return url + _encodeQuery(uriEncodedQuery) + ".js?";
-          },
-          dataType: "jsonp",
-          cache: true,
-          timeout: 1000,
-          rateLimitWait: 200,
-          jsonp: false,
-          jsonpCallback: "typeaheadResult",
-          beforeSend: function (jqXhr, settings) {
-//            console.log("beforeSend"); //TODO:debug
-          },
-          filter: function (parsedResponse) {
-//            console.log("filter"); //TODO:debug
+  <script>
+    function _encodeQuery (query) { //TODO: put into part of lib?
+      //e.g iphone 4 -> iphone_204
+      return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
+    };
 
-            var datums = $.map(parsedResponse.R, function (item) {
-              var datum = {};
-              if (_.isArray(item)) {
-                datum.name = item[0] + " in " + item[1][0][0];
-                datum.value = datum.name;
-              } else {
-                datum.name = item;
-                datum.value = item;
-              }
-              return datum;
-            });
-            return datums;
-          }
+    $('#search').typeahead({
+      name:      "suggestion",
+      highlight: true,
+      remote:    {
+        url:           "http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/",
+        replace:       function (url, uriEncodedQuery) {
+          return url + _encodeQuery(uriEncodedQuery) + ".js?";
+        },
+        dataType:      "jsonp",
+        cache:         true,
+//        timeout:       4000, //don't timeout to avoid typeError
+        rateLimitWait: 200,
+        jsonpCallback: "typeaheadResult",
+        beforeSend:    function (jqXhr, settings) {
+          //            console.log("beforeSend"); //TODO:debug
+        },
+        filter:        function (parsedResponse) {
+          //            console.log("filter"); //TODO:debug
+
+          var datums = $.map(parsedResponse.R, function (item) {
+            var datum = {};
+            if (_.isArray(item)) {
+              datum.name = item[0] + " in " + item[1][0][0];
+              datum.value = datum.name;
+            } else {
+              datum.name = item;
+              datum.value = item;
+            }
+            return datum;
+          });
+          return datums;
         }
-      });
+      }
+    });
 
-      function _encodeQuery(query) {
-        //e.g iphone 4 -> iphone_204
-        return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
-      };
-
-    </script>
-  </body>
+  </script>
+</body>
 </html>

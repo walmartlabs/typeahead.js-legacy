@@ -15,7 +15,8 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 ---
 
-### Nov 25, 2013
+### Add Feature Nov 25, 2013
+**Added**
 * add jsonp support
 * add highlighter with bearhug [317]
 * add option to disable localstorage
@@ -24,6 +25,10 @@ For more information on semantic versioning, please visit http://semver.org/.
 * add playground2.html for testing with walmart.com
 * add Unit testing specs for new features above
 
+**Backlog**
+* Solve remote blinking dropdown ux
+* Convert to underscore util, requirejs based lib
+* Change to Karma for testing, use bower, and dependency updates,
 
 ### 0.9.3 June 24, 2013
 

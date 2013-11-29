@@ -1,128 +1,144 @@
-describe('highlight', function() {
+describe('Highlighter', function() {
+  var fixture, $fixture, $el, pattern;
 
-  it('should throw an error if node is not set', function() {
+  beforeEach(function () {
+    fixture = [
+      "<span class=\"tt-suggestions\">",
+      "  <div class=\"tt-suggestion\"><p>iPhone 5s<\/p><\/div>",
+      "  <div class=\"tt-suggestion\"><p>iPhone in Video Games<\/p><\/div>",
+      "  <div class=\"tt-suggestion\"><p>iphone 4<\/p><\/div>",
+      "  <div class=\"tt-suggestion\"><p>iphone 4s<\/p><\/div>",
+      "  <div class=\"tt-suggestion\"><p>iphone 5<\/p><\/div>",
+      "<\/span>"
+    ].join("");
+    setFixtures(fixture);
+    $fixture = $('#jasmine-fixtures');
+    this.$el = $fixture.find(".tt-suggestions");
+    this.$firstItem = this.$el.find(".tt-suggestion").first().children();
+    this.pattern = "iphone";
+  });
+
+  afterEach(function () {
+    fixture = "";
+    $fixture = null;
+    this.$el = null;
+    this.pattern = "";
+  });
+
+  it('should throw error if el is not set', function() {
+    function init() {
+      new Highlighter({pattern: this.pattern});
+    };
     expect(init).toThrow();
-    function init() { highlight({ pattern: 'abc' }); }
   });
 
-  it('should throw an error if pattern is not set', function() {
+  it('should support el to be native node object', function() {
+    var after = "<b>iPhone</b> 5s";
+
+    new Highlighter({el: this.$el[0], pattern: this.pattern});
+    expect(this.$firstItem.html()).toEqual(after);
+  });
+
+  it('should support el to be jquery object', function() {
+    var after = "<b>iPhone</b> 5s";
+
+    new Highlighter({el: this.$el, pattern: this.pattern});
+    expect(this.$firstItem.html()).toEqual(after);
+  });
+
+  it('should throw error if pattern is not set', function() {
+    function init() {
+      new Highlighter({el: this.$el});
+    };
     expect(init).toThrow();
-    function init() { highlight({ node: document.createElement('div') }); }
   });
 
-  it('should allow tagName to be specified', function() {
-    var before = 'abcde',
-        after = 'a<span>bcd</span>e',
-        testNode = buildTestNode(before);
+  it('should support pattern to be in arrays', function() {
+    var  before = "iPhone 5s",
+      after = "<b>iPhone</b> <b>5s</b>",
+      patterns = ["iphone", "5s"];
+    this.$firstItem.html(before);
 
-    highlight({ node: testNode, pattern: 'bcd', tagName: 'span' });
-    expect(testNode.innerHTML).toEqual(after);
+    new Highlighter({el: this.$el, pattern: patterns});
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
-  it('should allow className to be specified', function() {
-    var before = 'abcde',
-        after = 'a<strong class="one two">bcd</strong>e',
-        testNode = buildTestNode(before);
+  it('should support pattern to have regex chars in the pattern', function() {
+    var  before = "Dr. Who? *.js",
+      after = "<b>Dr.</b> <b>Who?</b> <b>*.js</b>",
+      patterns = ["Dr.", "Who?", "*.js"];
+    this.$firstItem.html(before);
 
-    highlight({ node: testNode, pattern: 'bcd', className: 'one two' });
-    expect(testNode.innerHTML).toEqual(after);
+    new Highlighter({el: this.$el, pattern: patterns});
+    expect(this.$firstItem.html()).toEqual(after);
+  });
+
+  it('should support tagName to be set', function() {
+    var  before = "iPhone 5s",
+      after = "<span>iPhone</span> 5s",
+      tagName = "span";
+    this.$firstItem.html(before);
+
+    new Highlighter({el: this.$el, pattern: this.pattern, tagName: tagName});
+    expect(this.$firstItem.html()).toEqual(after);
+  });
+
+  it('should support className to be set', function() {
+    var  before = "test iPhone 5s",//w complex example
+      after = "test <b class=\"blue\">iPhone</b> 5s",
+      className = "blue";
+    this.$firstItem.html(before);
+
+    new Highlighter({el: this.$el, pattern: this.pattern, className: className});
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
   it('should be case insensitive by default', function() {
-    var before = 'ABCDE',
-        after = 'A<strong>BCD</strong>E',
-        testNode = buildTestNode(before);
+    var  before = "iPhone 5s",
+      after = "<b>iPhone</b> 5s";
+    this.$firstItem.html(before);
 
-    highlight({ node: testNode, pattern: 'bcd' });
-    expect(testNode.innerHTML).toEqual(after);
+    new Highlighter({el: this.$el, pattern: this.pattern});
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
-  it('should support case sensitivity', function() {
-    var before = 'ABCDE',
-        after = 'ABCDE',
-        testNode = buildTestNode(before);
+  it('should support caseSensitive to be set true', function() {
+    var  before = "iPhone 5s",
+      after = "iPhone 5s";
+    this.$firstItem.html(before);
 
-    highlight({ node: testNode, pattern: 'bcd', caseSensitive: true });
-    expect(testNode.innerHTML).toEqual(after);
+    new Highlighter({el: this.$el, pattern: this.pattern, caseSensitive:true});
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
-  it('should support words only matching', function() {
-    var before = 'tone one phone',
-        after = 'tone <strong>one</strong> phone',
-        testNode = buildTestNode(before);
+  it('should work with html tags, attributes and comments', function() {
+    var  before = "<span class=\"class\"></span><!-- commment-->",
+      after = "<span class=\"class\"></span><!-- commment-->";
+      patterns = ["span", "class", "comment"];
+    this.$firstItem.html(before);
 
-    highlight({ node: testNode, pattern: 'one', wordsOnly: true });
-    expect(testNode.innerHTML).toEqual(after);
+    new Highlighter({el: this.$el, pattern: patterns});
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
-  it('should support matching multiple patterns', function() {
-    var before = 'tone one phone',
-        after = '<strong>tone</strong> one <strong>phone</strong>',
-        testNode = buildTestNode(before);
-
-    highlight({ node: testNode, pattern: ['tone', 'phone'] });
-    expect(testNode.innerHTML).toEqual(after);
-  });
-
-  it('should support regex chars in the pattern', function() {
-    var before = '*.js when?',
-        after = '<strong>*.</strong>js when<strong>?</strong>',
-        testNode = buildTestNode(before);
-
-    highlight({ node: testNode, pattern: ['*.', '?'] });
-    expect(testNode.innerHTML).toEqual(after);
-  });
-
-  it('should work on complex html structures', function() {
+  it('should work with complex html structures', function() {
     var before = [
-          '<div>abcde',
-            '<span>abcde</span>',
-            '<div><p>abcde</p></div>',
-          '</div>'
-        ].join(''),
-        after = [
-          '<div><strong>abc</strong>de',
-            '<span><strong>abc</strong>de</span>',
-            '<div><p><strong>abc</strong>de</p></div>',
-          '</div>'
-        ].join(''),
-        testNode = buildTestNode(before);
+        '<div>abcde',
+          '<span>abcde</span>',
+          '<div><p>abcde</p></div>',
+        '</div>'
+      ].join(''),
+      after = [
+        '<div><b>abc</b>de',
+          '<span><b>abc</b>de</span>',
+          '<div><p><b>abc</b>de</p></div>',
+        '</div>'
+      ].join(''),
+      patterns = "abc";
+    this.$firstItem.html(before);
 
-    highlight({ node: testNode, pattern: 'abc' });
-    expect(testNode.innerHTML).toEqual(after);
+    new Highlighter({el: this.$el, pattern: patterns});
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
-  it('should ignore html tags and attributes', function() {
-    var before = '<span class="class"></span>',
-        after = '<span class="class"></span>',
-        testNode = buildTestNode(before);
-
-    highlight({ node: testNode, pattern: ['span', 'class'] });
-    expect(testNode.innerHTML).toEqual(after);
-  });
-
-  it('should not match across tags', function() {
-    var before = 'a<span>b</span>c',
-        after = 'a<span>b</span>c',
-        testNode = buildTestNode(before);
-
-    highlight({ node: testNode, pattern: 'abc' });
-    expect(testNode.innerHTML).toEqual(after);
-  });
-
-  it('should ignore html comments', function() {
-    var before = '<!-- abc -->',
-        after = '<!-- abc -->',
-        testNode = buildTestNode(before);
-
-    highlight({ node: testNode, pattern: 'abc' });
-    expect(testNode.innerHTML).toEqual(after);
-  });
-
-  function buildTestNode(content) {
-    var node = document.createElement('div');
-    node.innerHTML = content;
-
-    return node;
-  }
 });

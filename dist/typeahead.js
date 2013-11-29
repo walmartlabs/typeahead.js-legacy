@@ -134,57 +134,71 @@
         },
         noop: function() {}
     };
-    var bearhug = function(doc) {
+    var Highlighter = function(jQuery) {
         var defaults = {
-            node: null,
+            el: null,
             pattern: null,
-            tagName: "strong",
+            tagName: "b",
             className: null,
-            wordsOnly: false,
             caseSensitive: false
         };
-        return function bearhug(o) {
-            var regex;
+        function Highlighter(o) {
             o = utils.mixin({}, defaults, o);
-            if (!o.node || !o.pattern) {
-                throw new Error("both node and pattern must be set");
+            if (!o.el || !o.pattern) {
+                throw new Error("Highlighter(): el and pattern is required");
+            }
+            if (o.el instanceof jQuery) {
+                o.el = o.el[0];
             }
             o.pattern = utils.isArray(o.pattern) ? o.pattern : [ o.pattern ];
-            regex = getRegex(o.pattern, o.caseSensitive, o.wordsOnly);
-            traverse(o.node, bearhugTextNode);
-            function bearhugTextNode(textNode) {
-                var match, patternNode;
-                if (match = regex.exec(textNode.data)) {
-                    wrapperNode = doc.createElement(o.tagName);
-                    o.className && (wrapperNode.className = o.className);
-                    patternNode = textNode.splitText(match.index);
-                    patternNode.splitText(match[0].length);
-                    wrapperNode.appendChild(patternNode.cloneNode(true));
-                    textNode.parentNode.replaceChild(wrapperNode, patternNode);
-                }
-                return !!match;
-            }
-            function traverse(el, bearhugTextNode) {
-                var childNode, TEXT_NODE_TYPE = 3;
-                for (var i = 0; i < el.childNodes.length; i++) {
-                    childNode = el.childNodes[i];
-                    if (childNode.nodeType === TEXT_NODE_TYPE) {
-                        i += bearhugTextNode(childNode) ? 1 : 0;
+            utils.bindAll(this);
+            this.o = o;
+            this.regex = null;
+            this.init();
+        }
+        utils.mixin(Highlighter.prototype, {
+            init: function() {
+                this.regex = this._getRegex(this.o.pattern);
+                this._traverseTextNode(this.o.el, this._highlightText);
+            },
+            _traverseTextNode: function(el, cb) {
+                var childNodes = el.childNodes, TEXT_NODE = 3, node, i = 0;
+                for (i = 0; i < childNodes.length; i++) {
+                    node = childNodes[i];
+                    if (node.nodeType === TEXT_NODE && !node.nodeValue.match(/(\r\n|\r|\n)+/g)) {
+                        i += cb(node) ? 1 : 0;
                     } else {
-                        traverse(childNode, bearhugTextNode);
+                        this._traverseTextNode(node, cb);
                     }
                 }
+            },
+            _getRegex: function(patterns) {
+                var patternsEscaped = [];
+                utils.each(patterns, function(index, pattern) {
+                    patternsEscaped.push(utils.escapeRegExChars(pattern));
+                });
+                var expression = "(" + patternsEscaped.join("|") + ")";
+                return this.o.caseSensitive ? new RegExp(expression) : new RegExp(expression, "i");
+            },
+            _highlightText: function(textNode) {
+                var matches = null, elHighlight = null;
+                if (textNode.data) {
+                    if (matches = this.regex.exec(textNode.data)) {
+                        var textNodeRest = textNode.splitText(matches.index);
+                        textNodeRest.splitText(matches[0].length);
+                        elHighlight = document.createElement(this.o.tagName);
+                        if (this.o.className) {
+                            elHighlight.className = this.o.className;
+                        }
+                        elHighlight.appendChild(document.createTextNode(matches[0]));
+                        textNode.parentNode.replaceChild(elHighlight, textNodeRest);
+                    }
+                    return !!matches;
+                }
             }
-        };
-        function getRegex(patterns, caseSensitive, wordsOnly) {
-            var escapedPatterns = [], regexStr;
-            for (var i = 0; i < patterns.length; i++) {
-                escapedPatterns.push(utils.escapeRegExChars(patterns[i]));
-            }
-            regexStr = wordsOnly ? "\\b(" + escapedPatterns.join("|") + ")\\b" : "(" + escapedPatterns.join("|") + ")";
-            return caseSensitive ? new RegExp(regexStr) : new RegExp(regexStr, "i");
-        }
-    }(window.document);
+        });
+        return Highlighter;
+    }(jQuery);
     var EventTarget = function() {
         var eventSplitter = /\s+/;
         return {
@@ -358,7 +372,6 @@
                 cache: o.cache,
                 timeout: o.timeout,
                 dataType: o.dataType || "json",
-                jsonp: o.jsonp,
                 jsonpCallback: o.jsonpCallback,
                 beforeSend: o.beforeSend
             };
@@ -896,8 +909,8 @@
                         });
                         fragment.appendChild($el[0]);
                     });
-                    dataset.highlight && bearhug({
-                        node: fragment,
+                    dataset.highlight && new Highlighter({
+                        el: fragment,
                         pattern: query
                     });
                     $dataset.show().find(".tt-suggestions").html(fragment);
