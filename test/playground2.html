@@ -70,9 +70,7 @@
         dataType:      "jsonp",
         jsonpCallback: "typeaheadResult",
         cache:         true,
-        timeout:       4000, //don't timeout for now to avoid jq typeError issue
-//        rateLimitWait: 200,
-//        maxParallelRequests: 6, //ajax parallel max
+        timeout:       4000,
         filter:        function (parsedResponse) {
           var results = parsedResponse.R;
           var datums = [];

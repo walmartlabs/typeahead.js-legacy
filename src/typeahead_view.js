@@ -178,11 +178,9 @@ var TypeaheadView = (function() {
     _setInputValueToSuggestionUnderCursor: function(e) {
       var suggestion = e.data;
 
-//      this.eventBus.trigger('cursorMoved', suggestion);
       if (!this.eventBus.triggerHandler('cursorMoved', suggestion)) { // modified to support event cursorMoved
         this.inputView.setInputValue(suggestion.value, true);
       }
-
     },
 
     _openDropdown: function() {

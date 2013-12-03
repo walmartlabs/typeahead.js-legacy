@@ -23,12 +23,12 @@ For more information on semantic versioning, please visit http://semver.org/.
 * add jasmine unit testing specs for new features above
 * fix some code formatting (padding)
 * add playground2.html for testing with walmart.com
-* update jquery lib to 10.2 to comply with Atlas env, added handlerbars.js for templating usage and underscore,  update
-grunt-contrib-jasmine lib to 0.5
+* update jquery lib to 10.2 to comply with Atlas env, added handlerbars.js for templating usage and underscore,  update grunt-contrib-jasmine lib to 0.5
 
 
 **Backlog**
 * Solve remote fetch dropdown blinking ux issue
+* Look into Firefox PersistentStorage tests failure issue
 * add some custom event. e.g. typeahead:suggestionsRendered .etc based on the ux
 * Convert to underscore instead of util
 * Change to Karma for testing, and use bower, requirejs
