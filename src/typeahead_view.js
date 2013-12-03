@@ -178,7 +178,9 @@ var TypeaheadView = (function() {
     _setInputValueToSuggestionUnderCursor: function(e) {
       var suggestion = e.data;
 
-      this.inputView.setInputValue(suggestion.value, true);
+      if (!this.eventBus.triggerHandler('cursorMoved', suggestion)) { // modified to support event cursorMoved
+        this.inputView.setInputValue(suggestion.value, true);
+      }
     },
 
     _openDropdown: function() {
@@ -228,9 +230,10 @@ var TypeaheadView = (function() {
 
       utils.each(this.datasets, function(i, dataset) {
         dataset.getSuggestions(query, function(suggestions) {
-          // only render the suggestions if the query hasn't changed
-          if (query === that.inputView.getQuery()) {
-            that.dropdownView.renderSuggestions(dataset, suggestions);
+          // only render the suggestions if the view hasn't
+          // been destroyed and if the query hasn't changed
+          if (that.$node && query === that.inputView.getQuery()) {
+            that.dropdownView.renderSuggestions(dataset, suggestions, query);
           }
         });
       });

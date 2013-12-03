@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="vendor/jquery-1.10.2.min.js"></script>
+  <script src="vendor/underscore-1.5.2.js"></script>
+  <script src="vendor/handlebars-v1.1.2.js"></script>
+  <script src="../dist/typeahead.js"></script>
+
+  <style>
+    .container {
+      width: 800px;
+      margin: 50px auto;
+    }
+
+    .typeahead-wrapper {
+      display: block;
+      margin: 50px 0;
+    }
+
+    .tt-dropdown-menu {
+      background-color: #fff;
+      border: 1px solid #000;
+    }
+
+    .tt-suggestion.tt-is-under-cursor {
+      background-color: #ccc;
+    }
+
+    .triggered-events {
+      float: right;
+      width: 500px;
+      height: 300px;
+    }
+
+    .tt-hint {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="typeahead-wrapper">
+      <label for="search">Search:</label>
+      <input class="searchbar-input js-searchbar-input js-instant-placeholder"
+        type="text" name="search" id="search" placeholder="Search" value="">
+    </div>
+  </div>
+
+  <script>
+    function _encodeQuery (query) {
+      //e.g iphone 4 -> iphone_204
+      return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
+    };
+
+    var html = "<p> {{value}} </p> ";
+    var template = Handlebars.compile(html);
+
+    //query: tablet, iphone
+    $('#search').typeahead({
+//      name:      "walmart", //disable localstorage for now
+      highlight: true,
+      template: template,
+      engine: Handlebars,
+      remote:    {
+        url:           "http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/",
+        replace:       function (url, uriEncodedQuery) {
+          return url + _encodeQuery(uriEncodedQuery) + ".js?";
+        },
+        dataType:      "jsonp",
+        jsonpCallback: "typeaheadResult",
+        cache:         true,
+        timeout:       4000,
+        filter:        function (parsedResponse) {
+          var results = parsedResponse.R;
+          var datums = [];
+          var i = 0, len = results.length;
+          for (i = 0; i < len; i++) {
+            if (i === 0 && $.isArray(results[i])) { //top search w cat
+              var topResults = results[i];
+              var j = 0, lenTopResults = topResults.length;
+
+              for (j = 0; j < lenTopResults; j++) { //top results
+                if (j === 0) { //top search
+                  datums.push({value: topResults[0]});
+
+                } else if (j === 1) { //category
+                  var catResults = topResults[j];
+                  var k = 0, lenCat = catResults.length;
+                  for (k = 0; k < lenCat; k++) { //category result
+                    datums.push({value: topResults[0] + " in " + catResults[k][0], category: catResults[k][0] });
+                  }
+                }
+              }
+            } else {
+              datums.push(results[i]);
+            }
+          }
+
+          return datums;
+        }
+      }
+    })
+      .on("typeahead:cursorMoved", function (ev, suggestion) {
+        $(this).val(suggestion.value);
+        return true;
+    });
+
+  </script>
+</body>
+</html>

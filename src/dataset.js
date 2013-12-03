@@ -42,6 +42,9 @@ var Dataset = (function() {
     // only initialize storage if there's a name otherwise
     // loading from storage on subsequent page loads is impossible
     this.storage = o.name ? new PersistentStorage(o.name) : null;
+
+    // support highlight
+    this.highlight = !!o.highlight;
   }
 
   utils.mixin(Dataset.prototype, {
@@ -87,7 +90,12 @@ var Dataset = (function() {
       }
 
       else {
-        deferred = $.getJSON(o.url).done(processPrefetchData);
+        deferred = $.ajax({
+          type: 'get',
+          url: o.url,
+          dataType: o.dataType || 'json',
+          beforeSend: o.beforeSend
+        }).done(processPrefetchData);
       }
 
       return deferred;
@@ -277,6 +285,7 @@ var Dataset = (function() {
           var item = that._transformDatum(datum), isDuplicate;
 
           // checks for duplicates
+          //TODO: add option for enable duplicates for ux?
           isDuplicate = utils.some(suggestions, function(suggestion) {
             return item.value === suggestion.value;
           });

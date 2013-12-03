@@ -6,13 +6,13 @@
 
 var DropdownView = (function() {
   var html = {
-        suggestionsList: '<span class="tt-suggestions"></span>'
-      },
-      css = {
-        suggestionsList: { display: 'block' },
-        suggestion: { whiteSpace: 'nowrap', cursor: 'pointer' },
-        suggestionChild: { whiteSpace: 'normal' }
-      };
+      suggestionsList: '<span class="tt-suggestions"></span>'
+    },
+    css = {
+      suggestionsList: { display: 'block' },
+      suggestion: { whiteSpace: 'nowrap', cursor: 'pointer' },
+      suggestionChild: { whiteSpace: 'normal' }
+    };
 
   // constructor
   // -----------
@@ -25,10 +25,11 @@ var DropdownView = (function() {
     this.isMouseOverDropdown = false;
 
     this.$menu = $(o.menu)
-    .on('mouseenter.tt', this._handleMouseenter)
-    .on('mouseleave.tt', this._handleMouseleave)
-    .on('click.tt', '.tt-suggestion', this._handleSelection)
-    .on('mouseover.tt', '.tt-suggestion', this._handleMouseover);
+      .on('mouseenter.tt', this._handleMouseenter)
+      .on('mouseleave.tt', this._handleMouseleave)
+      .on('click.tt', '.tt-suggestion', this._handleSelection)
+      .on('mouseover.tt', '.tt-suggestion', this._handleSuggestionMouseover)
+      .on('mouseleave.tt', '.tt-suggestion', this._handleSuggestionMouseleave);
   }
 
   utils.mixin(DropdownView.prototype, EventTarget, {
@@ -43,16 +44,22 @@ var DropdownView = (function() {
       this.isMouseOverDropdown = false;
     },
 
-    _handleMouseover: function($e) {
+    _handleSelection: function($e) {
+      var $suggestion = $($e.currentTarget);
+      this.trigger('suggestionSelected', extractSuggestion($suggestion));
+    },
+
+    _handleSuggestionMouseover: function($e) {
       var $suggestion = $($e.currentTarget);
 
       this._getSuggestions().removeClass('tt-is-under-cursor');
       $suggestion.addClass('tt-is-under-cursor');
     },
 
-    _handleSelection: function($e) {
+    _handleSuggestionMouseleave: function($e) {
       var $suggestion = $($e.currentTarget);
-      this.trigger('suggestionSelected', extractSuggestion($suggestion));
+
+      $suggestion.removeClass('tt-is-under-cursor');
     },
 
     _show: function() {
@@ -108,11 +115,11 @@ var DropdownView = (function() {
 
     _ensureVisibility: function($el) {
       var menuHeight = this.$menu.height() +
-            parseInt(this.$menu.css('paddingTop'), 10) +
-            parseInt(this.$menu.css('paddingBottom'), 10),
-          menuScrollTop = this.$menu.scrollTop(),
-          elTop = $el.position().top,
-          elBottom = elTop + $el.outerHeight(true);
+          parseInt(this.$menu.css('paddingTop'), 10) +
+          parseInt(this.$menu.css('paddingBottom'), 10),
+        menuScrollTop = this.$menu.scrollTop(),
+        elTop = $el.position().top,
+        elBottom = elTop + $el.outerHeight(true);
 
       if (elTop < 0) {
         this.$menu.scrollTop(menuScrollTop + elTop);
@@ -153,8 +160,8 @@ var DropdownView = (function() {
         this._hide();
 
         this.$menu
-        .find('.tt-suggestions > .tt-suggestion')
-        .removeClass('tt-is-under-cursor');
+          .find('.tt-suggestions > .tt-suggestion')
+          .removeClass('tt-is-under-cursor');
 
         this.trigger('closed');
       }
@@ -171,7 +178,7 @@ var DropdownView = (function() {
 
     setLanguageDirection: function(dir) {
       var ltrCss = { left: '0', right: 'auto' },
-          rtlCss = { left: 'auto', right:' 0' };
+        rtlCss = { left: 'auto', right:' 0' };
 
       dir === 'ltr' ? this.$menu.css(ltrCss) : this.$menu.css(rtlCss);
     },
@@ -186,8 +193,8 @@ var DropdownView = (function() {
 
     getSuggestionUnderCursor: function() {
       var $suggestion = this._getSuggestions()
-          .filter('.tt-is-under-cursor')
-          .first();
+        .filter('.tt-is-under-cursor')
+        .first();
 
       return $suggestion.length > 0 ? extractSuggestion($suggestion) : null;
     },
@@ -198,26 +205,26 @@ var DropdownView = (function() {
       return $suggestion.length > 0 ? extractSuggestion($suggestion) : null;
     },
 
-    renderSuggestions: function(dataset, suggestions) {
+    renderSuggestions: function(dataset, suggestions, query) {
       var datasetClassName = 'tt-dataset-' + dataset.name,
-          wrapper = '<div class="tt-suggestion">%body</div>',
-          compiledHtml,
-          $suggestionsList,
-          $dataset = this.$menu.find('.' + datasetClassName),
-          elBuilder,
-          fragment,
-          $el;
+        wrapper = '<div class="tt-suggestion">%body</div>',
+        compiledHtml,
+        $suggestionsList,
+        $dataset = this.$menu.find('.' + datasetClassName),
+        elBuilder,
+        fragment,
+        $el;
 
       // first time rendering suggestions for this dataset
       if ($dataset.length === 0) {
         $suggestionsList = $(html.suggestionsList).css(css.suggestionsList);
 
         $dataset = $('<div></div>')
-        .addClass(datasetClassName)
-        .append(dataset.header)
-        .append($suggestionsList)
-        .append(dataset.footer)
-        .appendTo(this.$menu);
+          .addClass(datasetClassName)
+          .append(dataset.header)
+          .append($suggestionsList)
+          .append(dataset.footer)
+          .appendTo(this.$menu);
       }
 
       // suggestions to be rendered
@@ -234,8 +241,8 @@ var DropdownView = (function() {
           elBuilder.innerHTML = wrapper.replace('%body', compiledHtml);
 
           $el = $(elBuilder.firstChild)
-          .css(css.suggestion)
-          .data('suggestion', suggestion);
+            .css(css.suggestion)
+            .data('suggestion', suggestion);
 
           $el.children().each(function() {
             $(this).css(css.suggestionChild);
@@ -243,6 +250,9 @@ var DropdownView = (function() {
 
           fragment.appendChild($el[0]);
         });
+
+        // highligting if it's on
+        dataset.highlight && new Highlighter({ el: fragment, pattern: query });
 
         // show this dataset in case it was previously empty
         // and render the new suggestions
@@ -254,14 +264,14 @@ var DropdownView = (function() {
         this.clearSuggestions(dataset.name);
       }
 
-      this.trigger('suggestionsRendered');
+      this.trigger('suggestionsRendered'); //TODO: add custom event hook
     },
 
     clearSuggestions: function(datasetName) {
       var $datasets = datasetName ?
-            this.$menu.find('.tt-dataset-' + datasetName) :
-            this.$menu.find('[class^="tt-dataset-"]'),
-          $suggestions = $datasets.find('.tt-suggestions');
+          this.$menu.find('.tt-dataset-' + datasetName) :
+          this.$menu.find('[class^="tt-dataset-"]'),
+        $suggestions = $datasets.find('.tt-suggestions');
 
       $datasets.hide();
       $suggestions.empty();

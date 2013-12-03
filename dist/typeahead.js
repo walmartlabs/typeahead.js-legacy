@@ -134,6 +134,71 @@
         },
         noop: function() {}
     };
+    var Highlighter = function(jQuery) {
+        var defaults = {
+            el: null,
+            pattern: null,
+            tagName: "b",
+            className: null,
+            caseSensitive: false
+        };
+        function Highlighter(o) {
+            o = utils.mixin({}, defaults, o);
+            if (!o.el || !o.pattern) {
+                throw new Error("Highlighter(): el and pattern is required");
+            }
+            if (o.el instanceof jQuery) {
+                o.el = o.el[0];
+            }
+            o.pattern = utils.isArray(o.pattern) ? o.pattern : [ o.pattern ];
+            utils.bindAll(this);
+            this.o = o;
+            this.regex = null;
+            this.initialize();
+        }
+        utils.mixin(Highlighter.prototype, {
+            initialize: function() {
+                this.regex = this._getRegex(this.o.pattern);
+                this._traverseTextNode(this.o.el, this._highlightText);
+            },
+            _traverseTextNode: function(el, cb) {
+                var childNodes = el.childNodes, TEXT_NODE = 3, node, i = 0;
+                for (i = 0; i < childNodes.length; i++) {
+                    node = childNodes[i];
+                    if (node.nodeType === TEXT_NODE && !node.nodeValue.match(/(\r\n|\r|\n)+/g)) {
+                        i += cb(node) ? 1 : 0;
+                    } else {
+                        this._traverseTextNode(node, cb);
+                    }
+                }
+            },
+            _getRegex: function(patterns) {
+                var patternsEscaped = [];
+                utils.each(patterns, function(index, pattern) {
+                    patternsEscaped.push(utils.escapeRegExChars(pattern));
+                });
+                var expression = "(" + patternsEscaped.join("|") + ")";
+                return this.o.caseSensitive ? new RegExp(expression) : new RegExp(expression, "i");
+            },
+            _highlightText: function(textNode) {
+                var matches = null, elHighlight = null;
+                if (textNode.data) {
+                    if (matches = this.regex.exec(textNode.data)) {
+                        var textNodeRest = textNode.splitText(matches.index);
+                        textNodeRest.splitText(matches[0].length);
+                        elHighlight = document.createElement(this.o.tagName);
+                        if (this.o.className) {
+                            elHighlight.className = this.o.className;
+                        }
+                        elHighlight.appendChild(document.createTextNode(matches[0]));
+                        textNode.parentNode.replaceChild(elHighlight, textNodeRest);
+                    }
+                    return !!matches;
+                }
+            }
+        });
+        return Highlighter;
+    }(jQuery);
     var EventTarget = function() {
         var eventSplitter = /\s+/;
         return {
@@ -181,7 +246,11 @@
         utils.mixin(EventBus.prototype, {
             trigger: function(type) {
                 var args = [].slice.call(arguments, 1);
-                this.$el.trigger(namespace + type, args);
+                return this.$el.trigger(namespace + type, args);
+            },
+            triggerHandler: function(type) {
+                var args = [].slice.call(arguments, 1);
+                return this.$el.triggerHandler(namespace + type, args);
             }
         });
         return EventBus;
@@ -307,6 +376,7 @@
                 cache: o.cache,
                 timeout: o.timeout,
                 dataType: o.dataType || "json",
+                jsonpCallback: o.jsonpCallback,
                 beforeSend: o.beforeSend
             };
             this._get = (/^throttle$/i.test(o.rateLimitFn) ? utils.throttle : utils.debounce)(this._get, o.rateLimitWait || 300);
@@ -394,6 +464,7 @@
             this.itemHash = {};
             this.adjacencyList = {};
             this.storage = o.name ? new PersistentStorage(o.name) : null;
+            this.highlight = !!o.highlight;
         }
         utils.mixin(Dataset.prototype, {
             _processLocalData: function(data) {
@@ -419,7 +490,12 @@
                     });
                     deferred = $.Deferred().resolve();
                 } else {
-                    deferred = $.getJSON(o.url).done(processPrefetchData);
+                    deferred = $.ajax({
+                        type: "get",
+                        url: o.url,
+                        dataType: o.dataType || "json",
+                        beforeSend: o.beforeSend
+                    }).done(processPrefetchData);
                 }
                 return deferred;
                 function processPrefetchData(data) {
@@ -705,7 +781,7 @@
             this.isOpen = false;
             this.isEmpty = true;
             this.isMouseOverDropdown = false;
-            this.$menu = $(o.menu).on("mouseenter.tt", this._handleMouseenter).on("mouseleave.tt", this._handleMouseleave).on("click.tt", ".tt-suggestion", this._handleSelection).on("mouseover.tt", ".tt-suggestion", this._handleMouseover);
+            this.$menu = $(o.menu).on("mouseenter.tt", this._handleMouseenter).on("mouseleave.tt", this._handleMouseleave).on("click.tt", ".tt-suggestion", this._handleSelection).on("mouseover.tt", ".tt-suggestion", this._handleSuggestionMouseover).on("mouseleave.tt", ".tt-suggestion", this._handleSuggestionMouseleave);
         }
         utils.mixin(DropdownView.prototype, EventTarget, {
             _handleMouseenter: function() {
@@ -714,14 +790,18 @@
             _handleMouseleave: function() {
                 this.isMouseOverDropdown = false;
             },
-            _handleMouseover: function($e) {
+            _handleSelection: function($e) {
+                var $suggestion = $($e.currentTarget);
+                this.trigger("suggestionSelected", extractSuggestion($suggestion));
+            },
+            _handleSuggestionMouseover: function($e) {
                 var $suggestion = $($e.currentTarget);
                 this._getSuggestions().removeClass("tt-is-under-cursor");
                 $suggestion.addClass("tt-is-under-cursor");
             },
-            _handleSelection: function($e) {
+            _handleSuggestionMouseleave: function($e) {
                 var $suggestion = $($e.currentTarget);
-                this.trigger("suggestionSelected", extractSuggestion($suggestion));
+                $suggestion.removeClass("tt-is-under-cursor");
             },
             _show: function() {
                 this.$menu.css("display", "block");
@@ -812,7 +892,7 @@
                 var $suggestion = this._getSuggestions().first();
                 return $suggestion.length > 0 ? extractSuggestion($suggestion) : null;
             },
-            renderSuggestions: function(dataset, suggestions) {
+            renderSuggestions: function(dataset, suggestions, query) {
                 var datasetClassName = "tt-dataset-" + dataset.name, wrapper = '<div class="tt-suggestion">%body</div>', compiledHtml, $suggestionsList, $dataset = this.$menu.find("." + datasetClassName), elBuilder, fragment, $el;
                 if ($dataset.length === 0) {
                     $suggestionsList = $(html.suggestionsList).css(css.suggestionsList);
@@ -832,6 +912,10 @@
                             $(this).css(css.suggestionChild);
                         });
                         fragment.appendChild($el[0]);
+                    });
+                    dataset.highlight && new Highlighter({
+                        el: fragment,
+                        pattern: query
                     });
                     $dataset.show().find(".tt-suggestions").html(fragment);
                 } else {
@@ -963,7 +1047,9 @@
             },
             _setInputValueToSuggestionUnderCursor: function(e) {
                 var suggestion = e.data;
-                this.inputView.setInputValue(suggestion.value, true);
+                if (!this.eventBus.triggerHandler("cursorMoved", suggestion)) {
+                    this.inputView.setInputValue(suggestion.value, true);
+                }
             },
             _openDropdown: function() {
                 this.dropdownView.open();
@@ -993,8 +1079,8 @@
                 }
                 utils.each(this.datasets, function(i, dataset) {
                     dataset.getSuggestions(query, function(suggestions) {
-                        if (query === that.inputView.getQuery()) {
-                            that.dropdownView.renderSuggestions(dataset, suggestions);
+                        if (that.$node && query === that.inputView.getQuery()) {
+                            that.dropdownView.renderSuggestions(dataset, suggestions, query);
                         }
                     });
                 });

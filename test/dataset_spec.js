@@ -63,12 +63,12 @@ describe('Dataset', function() {
 
   describe('#constructor', function() {
     describe('when called with a name', function() {
-    beforeEach(function() {
-      this.dataset = new Dataset({
-        name: '#constructor',
-        local: fixtureStrings
+      beforeEach(function() {
+        this.dataset = new Dataset({
+          name: '#constructor',
+          local: fixtureStrings
+        });
       });
-    });
 
       it('should initialize persistent storage', function() {
         expect(this.dataset.storage).toBeDefined();
@@ -230,7 +230,7 @@ describe('Dataset', function() {
             expect(this.request).not.toBeNull();
           });
 
-          it('should process and merge fileered data', function() {
+          it('should process and merge filtered data', function() {
             expect(this.dataset.adjacencyList).toEqual(filteredAdjacencyList);
             expect(this.dataset.itemHash).toEqual(filteredItemHash);
           });
@@ -291,14 +291,39 @@ describe('Dataset', function() {
     });
 
     describe('when called with remote', function() {
-      beforeEach(function() {
-        this.dataset = new Dataset({ remote: '/remote' });
-        this.dataset.initialize();
+      describe("if remote is simple string" , function () {
+        beforeEach(function() {
+          this.dataset = new Dataset({
+            remote: '/remote'
+          });
+          this.dataset.initialize();
+        });
+
+        it('should initialize the transport', function() {
+          expect(Transport).toHaveBeenCalledWith('/remote');
+        });
       });
 
-      it('should initialize the transport', function() {
-        expect(Transport).toHaveBeenCalledWith('/remote');
+      describe("if remote is complex ajax settings" , function () {
+        var ajaxSetting = {
+          url: "/remote",
+          dataType: "jsonp",
+          cache: true,
+          jsonpCallback: "typeaheadResult"
+        };
+        beforeEach(function() {
+          this.dataset = new Dataset({
+            remote: ajaxSetting
+          });
+          this.dataset.initialize();
+        });
+
+        it('should initialize the transport w ajax setting', function() {
+          expect(Transport).toHaveBeenCalledWith(ajaxSetting);
+        });
       });
+
+
     });
   });
 
