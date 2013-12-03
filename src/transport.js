@@ -31,8 +31,7 @@ var Transport = (function() {
       cache: o.cache,
       timeout: o.timeout,
       dataType: o.dataType || 'json',
-//      jsonp: o.jsonp,
-      jsonpCallback: o.jsonpCallback,
+      jsonpCallback: o.jsonpCallback, //add jsonpCallback
       beforeSend: o.beforeSend
     };
 
@@ -61,7 +60,6 @@ var Transport = (function() {
       // success callback
       function done(resp) {
         var data = that.filter ? that.filter(resp) : resp;
-
         cb && cb(data);
 
         // cache the resp and not the results of applying filter

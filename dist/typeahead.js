@@ -154,10 +154,10 @@
             utils.bindAll(this);
             this.o = o;
             this.regex = null;
-            this.init();
+            this.initialize();
         }
         utils.mixin(Highlighter.prototype, {
-            init: function() {
+            initialize: function() {
                 this.regex = this._getRegex(this.o.pattern);
                 this._traverseTextNode(this.o.el, this._highlightText);
             },
@@ -246,7 +246,11 @@
         utils.mixin(EventBus.prototype, {
             trigger: function(type) {
                 var args = [].slice.call(arguments, 1);
-                this.$el.trigger(namespace + type, args);
+                return this.$el.trigger(namespace + type, args);
+            },
+            triggerHandler: function(type) {
+                var args = [].slice.call(arguments, 1);
+                return this.$el.triggerHandler(namespace + type, args);
             }
         });
         return EventBus;
@@ -454,13 +458,13 @@
             this.footer = o.footer;
             this.valueKey = o.valueKey || "value";
             this.template = compileTemplate(o.template, o.engine, this.valueKey);
-            this.highlight = !!o.highlight;
             this.local = o.local;
             this.prefetch = o.prefetch;
             this.remote = o.remote;
             this.itemHash = {};
             this.adjacencyList = {};
             this.storage = o.name ? new PersistentStorage(o.name) : null;
+            this.highlight = !!o.highlight;
         }
         utils.mixin(Dataset.prototype, {
             _processLocalData: function(data) {
@@ -1043,7 +1047,9 @@
             },
             _setInputValueToSuggestionUnderCursor: function(e) {
                 var suggestion = e.data;
-                this.inputView.setInputValue(suggestion.value, true);
+                if (!this.eventBus.triggerHandler("cursorMoved", suggestion)) {
+                    this.inputView.setInputValue(suggestion.value, true);
+                }
             },
             _openDropdown: function() {
                 this.dropdownView.open();

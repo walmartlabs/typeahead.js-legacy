@@ -30,13 +30,13 @@ var Highlighter = (function (jQuery) {
     utils.bindAll(this);
     this.o = o;
     this.regex = null;
-    this.init();
+    this.initialize();
   }
 
   //prototype
   utils.mixin(Highlighter.prototype, {
     //public
-    init: function () {
+    initialize: function () {
       this.regex = this._getRegex(this.o.pattern);
       this._traverseTextNode(this.o.el, this._highlightText);
     },

@@ -142,6 +142,28 @@ describe('Transport', function() {
         this.request.response(successResp);
       });
 
+      it("should work with JSONP", function () {
+        var self = this;
+        this.transportJSONP = new Transport({
+          url: 'http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/%QUERY.js',
+          dataType: "jsonp",
+          jsonpCallback: "typeaheadResult"
+        });
+        this.processRemoteData = function (data) {
+          self.result = data;
+        };
+        spyOn(this, "processRemoteData").andCallThrough();
+
+        this.transportJSONP.get("iphone", this.processRemoteData);
+        waitsFor(function () {
+          return !!self.result;
+        });
+        runs(function(){
+          expect(this.processRemoteData).toHaveBeenCalled();
+          expect(Object.keys(this.result).length).toEqual(2);
+        });
+      });
+
       it('should invoke callback with json response', function() {
         var spy = jasmine.createSpy();
 

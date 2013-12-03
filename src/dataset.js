@@ -31,9 +31,6 @@ var Dataset = (function() {
     this.valueKey = o.valueKey || 'value';
     this.template = compileTemplate(o.template, o.engine, this.valueKey);
 
-    //highlight
-    this.highlight = !!o.highlight;
-
     // used then deleted in #initialize
     this.local = o.local;
     this.prefetch = o.prefetch;
@@ -45,6 +42,9 @@ var Dataset = (function() {
     // only initialize storage if there's a name otherwise
     // loading from storage on subsequent page loads is impossible
     this.storage = o.name ? new PersistentStorage(o.name) : null;
+
+    // support highlight
+    this.highlight = !!o.highlight;
   }
 
   utils.mixin(Dataset.prototype, {
@@ -285,6 +285,7 @@ var Dataset = (function() {
           var item = that._transformDatum(datum), isDuplicate;
 
           // checks for duplicates
+          //TODO: add option for enable duplicates for ux?
           isDuplicate = utils.some(suggestions, function(suggestion) {
             return item.value === suggestion.value;
           });

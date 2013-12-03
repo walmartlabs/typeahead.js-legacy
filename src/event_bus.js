@@ -21,8 +21,13 @@ var EventBus = (function() {
 
     trigger: function(type) {
       var args = [].slice.call(arguments, 1);
+      return this.$el.trigger(namespace + type, args);
+    },
 
-      this.$el.trigger(namespace + type, args);
+    // Added triggerHandler to use $.triggerHandler()- to avoid bubble up and support return defined value from handler instead of jQ obj
+    triggerHandler: function (type) {
+      var args = [].slice.call(arguments, 1);
+      return this.$el.triggerHandler(namespace + type, args);
     }
   });
 
