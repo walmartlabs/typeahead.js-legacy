@@ -18,17 +18,20 @@ For more information on semantic versioning, please visit http://semver.org/.
 ### Add Feature Nov 25, 2013
 **Added**
 * add jsonp support
-* add highlighter with bearhug [317]
-* add option to disable localstorage
-* add custom event typeahead:suggestionsRendered
-* update jquery depedency to 10.2 to comply with Atlas, update grunt-contrib-jasmine lib to 0.5
+* add highlighter and option to enable/disable
+* add triggerHandler in eventbus
+* add jasmine unit testing specs for new features above
+* fix some code formatting (padding)
 * add playground2.html for testing with walmart.com
-* add Unit testing specs for new features above
+* update jquery lib to 10.2 to comply with Atlas env, added handlerbars.js for templating usage and underscore,  update
+grunt-contrib-jasmine lib to 0.5
+
 
 **Backlog**
-* Solve remote blinking dropdown ux
-* Convert to underscore util, requirejs based lib
-* Change to Karma for testing, use bower, and dependency updates,
+* Solve remote fetch dropdown blinking ux issue
+* add some custom event. e.g. typeahead:suggestionsRendered .etc based on the ux
+* Convert to underscore instead of util
+* Change to Karma for testing, and use bower, requirejs
 
 ### 0.9.3 June 24, 2013
 
