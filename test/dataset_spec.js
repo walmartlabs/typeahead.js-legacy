@@ -291,7 +291,7 @@ describe('Dataset', function() {
     });
 
     describe('when called with remote', function() {
-      describe("if remote is simple string" , function () {
+      describe('if remote is simple string' , function () {
         beforeEach(function() {
           this.dataset = new Dataset({
             remote: '/remote'
@@ -304,12 +304,12 @@ describe('Dataset', function() {
         });
       });
 
-      describe("if remote is complex ajax settings" , function () {
+      describe('if remote is complex ajax settings' , function () {
         var ajaxSetting = {
-          url: "/remote",
-          dataType: "jsonp",
+          url: '/remote',
+          dataType: 'jsonp',
           cache: true,
-          jsonpCallback: "typeaheadResult"
+          jsonpCallback: 'typeaheadResult'
         };
         beforeEach(function() {
           this.dataset = new Dataset({

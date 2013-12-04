@@ -1,8 +1,8 @@
 describe('Transport', function() {
   var successData = { prop: 'val' },
-      successResp = { status: 200, responseText: JSON.stringify(successData) },
-      errorResp = { status: 500 },
-      _debounce;
+    successResp = { status: 200, responseText: JSON.stringify(successData) },
+    errorResp = { status: 500 },
+    _debounce;
 
   beforeEach(function() {
     jasmine.Ajax.useMock();
@@ -127,7 +127,7 @@ describe('Transport', function() {
 
       it('should set args for the on-deck request', function() {
         expect(this.transport.onDeckRequestArgs)
-        .toEqual(['http://example.com?q=bad', $.noop]);
+          .toEqual(['http://example.com?q=bad', $.noop]);
       });
     });
 
@@ -142,19 +142,19 @@ describe('Transport', function() {
         this.request.response(successResp);
       });
 
-      it("should work with JSONP", function () {
+      it('should work with JSONP', function () {
         var self = this;
         this.transportJSONP = new Transport({
           url: 'http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/%QUERY.js',
-          dataType: "jsonp",
-          jsonpCallback: "typeaheadResult"
+          dataType: 'jsonp',
+          jsonpCallback: 'typeaheadResult'
         });
         this.processRemoteData = function (data) {
           self.result = data;
         };
-        spyOn(this, "processRemoteData").andCallThrough();
+        spyOn(this, 'processRemoteData').andCallThrough();
 
-        this.transportJSONP.get("iphone", this.processRemoteData);
+        this.transportJSONP.get('iphone', this.processRemoteData);
         waitsFor(function () {
           return !!self.result;
         });
@@ -172,7 +172,7 @@ describe('Transport', function() {
 
       it('should add response to the cache', function() {
         expect(this.requestCache.set)
-        .toHaveBeenCalledWith('http://example.com?q=has%20space', successData);
+          .toHaveBeenCalledWith('http://example.com?q=has%20space', successData);
       });
 
       it('should call filter', function() {
