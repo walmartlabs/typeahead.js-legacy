@@ -2,7 +2,7 @@ var Highlighter = (function (jQuery) {
   var defaults = {
     el: null,
     pattern: null,
-    tagName: "b",
+    tagName: 'b',
     className: null,
     caseSensitive: false
   };
@@ -17,7 +17,7 @@ var Highlighter = (function (jQuery) {
 
     //input validate & clean & type support
     if(!o.el || !o.pattern) {
-      throw new Error("Highlighter(): el and pattern is required");
+      throw new Error('Highlighter(): el and pattern is required');
     }
 
     if (o.el instanceof jQuery) {
@@ -65,9 +65,9 @@ var Highlighter = (function (jQuery) {
       utils.each(patterns, function (index, pattern) {
         patternsEscaped.push(utils.escapeRegExChars(pattern)); //escape Regex character
       });
-      var expression = "(" + patternsEscaped.join("|") + ")";
+      var expression = '(' + patternsEscaped.join('|') + ')';
 
-      return this.o.caseSensitive ? new RegExp(expression) : new RegExp(expression, "i");
+      return this.o.caseSensitive ? new RegExp(expression) : new RegExp(expression, 'i');
     },
 
     _highlightText: function (textNode) {
