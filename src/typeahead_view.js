@@ -6,7 +6,7 @@
 
 var TypeaheadView = (function() {
   var html = {
-        wrapper: '<span class="twitter-typeahead"></span>',
+        wrapper: '<span class="typeahead"></span>',
         hint: '<input class="tt-hint" type="text" autocomplete="off" spellcheck="off" disabled>',
         dropdown: '<span class="tt-dropdown-menu"></span>'
       },
@@ -178,7 +178,7 @@ var TypeaheadView = (function() {
     _setInputValueToSuggestionUnderCursor: function(e) {
       var suggestion = e.data;
 
-      if (!this.eventBus.triggerHandler('cursorMoved', suggestion)) { // modified to support event cursorMoved
+      if (!this.eventBus.triggerHandler('cursorMoved', suggestion.datum)) { // modified to support event cursorMoved
         this.inputView.setInputValue(suggestion.value, true);
       }
     },

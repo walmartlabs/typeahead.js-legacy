@@ -45,6 +45,9 @@ var Dataset = (function() {
 
     // support highlight
     this.highlight = !!o.highlight;
+
+    // support duplicate
+    this.allowDuplicate = !!o.allowDuplicate;
   }
 
   utils.mixin(Dataset.prototype, {
@@ -286,11 +289,15 @@ var Dataset = (function() {
 
           // checks for duplicates
           //TODO: add option for enable duplicates for ux?
-          isDuplicate = utils.some(suggestions, function(suggestion) {
-            return item.value === suggestion.value;
-          });
+          if (that.allowDuplicate) {
+            suggestions.push(item);
+          } else {
+            isDuplicate = utils.some(suggestions, function(suggestion) {
+              return item.value === suggestion.value;
+            });
 
-          !isDuplicate && suggestions.push(item);
+            !isDuplicate && suggestions.push(item);
+          }
 
           // if we're at the limit, we no longer need to process
           // the remote results and can break out of the each loop

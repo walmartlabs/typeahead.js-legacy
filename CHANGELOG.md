@@ -14,9 +14,13 @@ And constructed with the following guidelines:
 For more information on semantic versioning, please visit http://semver.org/.
 
 ---
+### Update-2 Dec 6, 2013
 
-### Add Feature Nov 25, 2013
-**Added**
+* add support for allowDuplicate suggestion options (tweaking for new site design implementation)
+* update prototype playground2.html functionality to be similiar to design requirement
+
+### Update-1 Nov 25, 2013
+
 * add jsonp support
 * add highlighter and option to enable/disable
 * add triggerHandler in eventbus
@@ -25,11 +29,14 @@ For more information on semantic versioning, please visit http://semver.org/.
 * add playground2.html for testing with walmart.com
 * update jquery lib to 10.2 to comply with Atlas env, added handlerbars.js for templating usage and underscore,  update grunt-contrib-jasmine lib to 0.5
 
-
 **Backlog**
+
 * Solve remote fetch dropdown blinking ux issue
+* add options to disable tt-hint
+* performance boost 
 * Look into Firefox PersistentStorage tests failure issue
 * add some custom event. e.g. typeahead:suggestionsRendered .etc based on the ux
+* Add debug option to output server data
 * Convert to underscore instead of util
 * Change to Karma for testing, and use bower, requirejs
 

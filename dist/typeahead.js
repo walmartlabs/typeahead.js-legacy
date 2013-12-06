@@ -465,6 +465,7 @@
             this.adjacencyList = {};
             this.storage = o.name ? new PersistentStorage(o.name) : null;
             this.highlight = !!o.highlight;
+            this.allowDuplicate = !!o.allowDuplicate;
         }
         utils.mixin(Dataset.prototype, {
             _processLocalData: function(data) {
@@ -610,10 +611,14 @@
                     suggestions = suggestions.slice(0);
                     utils.each(data, function(i, datum) {
                         var item = that._transformDatum(datum), isDuplicate;
-                        isDuplicate = utils.some(suggestions, function(suggestion) {
-                            return item.value === suggestion.value;
-                        });
-                        !isDuplicate && suggestions.push(item);
+                        if (that.allowDuplicate) {
+                            suggestions.push(item);
+                        } else {
+                            isDuplicate = utils.some(suggestions, function(suggestion) {
+                                return item.value === suggestion.value;
+                            });
+                            !isDuplicate && suggestions.push(item);
+                        }
                         return suggestions.length < that.limit;
                     });
                     cb && cb(suggestions);
@@ -940,7 +945,7 @@
     }();
     var TypeaheadView = function() {
         var html = {
-            wrapper: '<span class="twitter-typeahead"></span>',
+            wrapper: '<span class="typeahead"></span>',
             hint: '<input class="tt-hint" type="text" autocomplete="off" spellcheck="off" disabled>',
             dropdown: '<span class="tt-dropdown-menu"></span>'
         }, css = {
@@ -1047,7 +1052,7 @@
             },
             _setInputValueToSuggestionUnderCursor: function(e) {
                 var suggestion = e.data;
-                if (!this.eventBus.triggerHandler("cursorMoved", suggestion)) {
+                if (!this.eventBus.triggerHandler("cursorMoved", suggestion.datum)) {
                     this.inputView.setInputValue(suggestion.value, true);
                 }
             },

@@ -347,6 +347,9 @@ describe('Dataset', function() {
     beforeEach(function() {
       this.dataset = new Dataset({ local: fixtureStrings, remote: '/remote' });
       this.dataset.initialize();
+
+      this.dataset2 = new Dataset({allowDuplicate: true, local: fixtureStrings, remote: '/remote'});
+      this.dataset2.initialize();
     });
 
     it('network requests are not triggered with enough local results', function() {
@@ -392,6 +395,29 @@ describe('Dataset', function() {
     it('does not match multiterm queries', function() {
       this.dataset.getSuggestions('coff ca', function(items) {
          expect(items).toEqual([]);
+      });
+    });
+
+    it('does not dedup the items when allowDuplicate is set true', function () {
+      var spy = jasmine.createSpy(),
+          remote = [fixtureDatums[0], fixtureStrings[2]];
+      this.dataset2.transport.get.andCallFake(function (g, cb) {
+        utils.defer(function() { cb(remote); });
+      });
+
+      expect(this.dataset2.allowDuplicate).toEqual(true);
+
+      this.dataset2.getSuggestions('c', spy);
+      waitsFor(function() { return spy.callCount === 2; });
+      runs(function() {
+        // local + remote suggestions
+        expect(spy.argsForCall[1][0]).toEqual([
+          expectedItemHash.coconut,
+          expectedItemHash.cake,
+          expectedItemHash.coffee,
+          expectedItemHash.grape,
+          expectedItemHash.cake
+        ]);
       });
     });
 
