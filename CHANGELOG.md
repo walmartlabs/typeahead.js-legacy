@@ -16,7 +16,7 @@ For more information on semantic versioning, please visit http://semver.org/.
 ---
 ### Update-2 Dec 6, 2013
 
-* add support for allDuplicate suggestion options (tweaking for new site design implementation)
+* add support for allowDuplicate suggestion options (tweaking for new site design implementation)
 * update prototype playground2.html functionality to be similiar to design requirement
 
 ### Update-1 Nov 25, 2013
