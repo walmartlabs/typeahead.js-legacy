@@ -44,9 +44,9 @@ var Highlighter = (function (jQuery) {
     //private
     _traverseTextNode: function (el, cb) {
       var childNodes = el.childNodes,
-        TEXT_NODE = 3,
-        node,
-        i = 0;
+          TEXT_NODE = 3,
+          node,
+          i = 0;
 
       for (i = 0; i < childNodes.length; i++) {
         node = childNodes[i];
@@ -72,7 +72,7 @@ var Highlighter = (function (jQuery) {
 
     _highlightText: function (textNode) {
       var matches = null,
-        elHighlight = null;
+          elHighlight = null;
 
       if (textNode.data) { //use data instead of nodeValue, data is defined for text node only
 

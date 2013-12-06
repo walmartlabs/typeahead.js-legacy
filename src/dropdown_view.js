@@ -178,7 +178,7 @@ var DropdownView = (function() {
 
     setLanguageDirection: function(dir) {
       var ltrCss = { left: '0', right: 'auto' },
-        rtlCss = { left: 'auto', right:' 0' };
+          rtlCss = { left: 'auto', right:' 0' };
 
       dir === 'ltr' ? this.$menu.css(ltrCss) : this.$menu.css(rtlCss);
     },
@@ -207,13 +207,13 @@ var DropdownView = (function() {
 
     renderSuggestions: function(dataset, suggestions, query) {
       var datasetClassName = 'tt-dataset-' + dataset.name,
-        wrapper = '<div class="tt-suggestion">%body</div>',
-        compiledHtml,
-        $suggestionsList,
-        $dataset = this.$menu.find('.' + datasetClassName),
-        elBuilder,
-        fragment,
-        $el;
+          wrapper = '<div class="tt-suggestion">%body</div>',
+          compiledHtml,
+          $suggestionsList,
+          $dataset = this.$menu.find('.' + datasetClassName),
+          elBuilder,
+          fragment,
+          $el;
 
       // first time rendering suggestions for this dataset
       if ($dataset.length === 0) {
@@ -271,7 +271,7 @@ var DropdownView = (function() {
       var $datasets = datasetName ?
           this.$menu.find('.tt-dataset-' + datasetName) :
           this.$menu.find('[class^="tt-dataset-"]'),
-        $suggestions = $datasets.find('.tt-suggestions');
+          $suggestions = $datasets.find('.tt-suggestions');
 
       $datasets.hide();
       $suggestions.empty();

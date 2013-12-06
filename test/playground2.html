@@ -59,9 +59,9 @@
     }
 
     var html = "<p> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</p> ",
-      template = Handlebars.compile(html),
-      $searchbar = $(".searchbar"),
-      $searchInput = $(".searchbar-input");
+        template = Handlebars.compile(html),
+        $searchbar = $(".searchbar"),
+        $searchInput = $(".searchbar-input");
 
      $searchbar.on("submit", function (ev, data) {
        var search = $searchInput.val(),
@@ -72,7 +72,7 @@
        if (search) {
          href += "search=" + search;
        }
-       
+
        if (data) {
          href += "&cat_id=" + data.cat_id;
        }
