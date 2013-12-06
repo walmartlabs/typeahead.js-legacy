@@ -30,7 +30,10 @@ For more information on semantic versioning, please visit http://semver.org/.
 * update jquery lib to 10.2 to comply with Atlas env, added handlerbars.js for templating usage and underscore,  update grunt-contrib-jasmine lib to 0.5
 
 **Backlog**
+
 * Solve remote fetch dropdown blinking ux issue
+* add options to disable tt-hint
+* performance boost 
 * Look into Firefox PersistentStorage tests failure issue
 * add some custom event. e.g. typeahead:suggestionsRendered .etc based on the ux
 * Add debug option to output server data

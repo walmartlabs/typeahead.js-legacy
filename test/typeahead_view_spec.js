@@ -560,7 +560,7 @@ describe('TypeaheadView', function() {
 
     it('should revert DOM modifications', function() {
       expect(this.$input).not.toHaveClass('tt-query');
-      expect(this.$input.parent('.twitter-typeahead')).not.toExist();
+      expect(this.$input.parent('.typeahead')).not.toExist();
       expect(this.$input.siblings('.tt-hint')).not.toExist();
       expect(this.$input.siblings('.tt-dropdown-menu')).not.toExist();
     });
