@@ -45,7 +45,7 @@
         <label for="search">Search:</label>
         <input class="searchbar-input js-searchbar-input js-instant-placeholder"
                type="text" name="search" id="search" placeholder="Search" value="">
-        <input type="hidden" name="cat_id" id="searchbar_cat_id"/>
+        <input type="hidden" id="searchbar_cat_id"/>
         <button type="submit">Search</button>
       </form>
 
@@ -58,9 +58,27 @@
       return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
     }
 
-    var html = "<p> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</p> ";
-    var template = Handlebars.compile(html);
+    var html = "<p> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</p> ",
+      template = Handlebars.compile(html),
+      $searchbar = $(".searchbar"),
+      $searchInput = $(".searchbar-input");
 
+     $searchbar.on("submit", function (ev, data) {
+       var search = $searchInput.val(),
+         href = "?";
+
+       ev.preventDefault();
+
+       if (search) {
+         href += "search=" + search;
+       }
+       
+       if (data) {
+         href += "&cat_id=" + data.cat_id;
+       }
+
+       location.href = href;
+     });
 
     //test cases: mixer, tablet, iphone
     $('#search').typeahead({
@@ -114,21 +132,16 @@
       }
     })
       .on("typeahead:cursorMoved", function (ev, suggestion) {
-        console.log("typeahead:cursorMoved", suggestion); //TODO:debug
-
-        $this.val(suggestion.value);
-        return true; //override default behavior
       })
 
       .on("typeahead:selected", function (ev, suggestion) {
         console.log("selected", ev, suggestion); //TODO:debug
-//
-        if (suggestion.category) {
-          $("#searchbar_cat_id").val(suggestion.categoryID);
-        }
-        console.log($("#searchbar_cat_id").val()); //TODO:debug
-        $(".searchbar").submit();
 
+        if (suggestion.category) {
+          $searchbar.trigger("submit", {cat_id: suggestion.categoryID});
+        } else {
+          $searchbar.trigger("submit");
+        }
         return true; //override default behavior
       })
 
@@ -144,7 +157,6 @@
       .on("typeahead:autocompleted", function (ev) {
         console.log("autocompleted", ev); //TODO:debug
       });
-
   </script>
 </body>
 </html>

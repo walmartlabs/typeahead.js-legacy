@@ -1071,11 +1071,10 @@
             _handleSelection: function(e) {
                 var byClick = e.type === "suggestionSelected", suggestion = byClick ? e.data : this.dropdownView.getSuggestionUnderCursor();
                 if (suggestion) {
+                    this.inputView.setInputValue(suggestion.value);
                     byClick ? this.inputView.focus() : e.data.preventDefault();
                     byClick && utils.isMsie() ? utils.defer(this.dropdownView.close) : this.dropdownView.close();
-                    if (!this.eventBus.triggerHandler("selected", suggestion.datum, suggestion.dataset)) {
-                        this.inputView.setInputValue(suggestion.value);
-                    }
+                    this.eventBus.trigger("selected", suggestion.datum, suggestion.dataset);
                 }
             },
             _getSuggestions: function() {
