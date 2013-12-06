@@ -178,7 +178,7 @@ var TypeaheadView = (function() {
     _setInputValueToSuggestionUnderCursor: function(e) {
       var suggestion = e.data;
 
-      if (!this.eventBus.triggerHandler('cursorMoved', suggestion)) { // modified to support event cursorMoved
+      if (!this.eventBus.triggerHandler('cursorMoved', suggestion.datum)) { // modified to support event cursorMoved
         this.inputView.setInputValue(suggestion.value, true);
       }
     },
@@ -207,7 +207,7 @@ var TypeaheadView = (function() {
             e.data : this.dropdownView.getSuggestionUnderCursor();
 
       if (suggestion) {
-        this.inputView.setInputValue(suggestion.value);
+//        this.inputView.setInputValue(suggestion.value);
 
         // if triggered by click, ensure the query input still has focus
         // if triggered by keypress, prevent default browser behavior
@@ -219,7 +219,10 @@ var TypeaheadView = (function() {
         byClick && utils.isMsie() ?
           utils.defer(this.dropdownView.close) : this.dropdownView.close();
 
-        this.eventBus.trigger('selected', suggestion.datum, suggestion.dataset);
+//        this.eventBus.trigger('selected', suggestion.datum, suggestion.dataset);
+        if (!this.eventBus.triggerHandler('selected', suggestion.datum, suggestion.dataset)) {
+          this.inputView.setInputValue(suggestion.value);
+        }
       }
     },
 
