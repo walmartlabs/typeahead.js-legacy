@@ -260,7 +260,9 @@ var Dataset = (function() {
     },
 
     getSuggestions: function(query, cb) {
-      var that = this, terms, suggestions, cacheHit = false;
+      var that = this, terms, suggestions, cacheHit;
+
+//      debugger;
 
       // don't do anything until the minLength constraint is met
       if (query.length < this.minLength) {
@@ -277,7 +279,10 @@ var Dataset = (function() {
       // if a cache hit occurred, skip rendering local suggestions
       // because the rendering of local/remote suggestions is already
       // in the event loop
-      !cacheHit && cb && cb(suggestions);
+//      !cacheHit && cb && cb(suggestions, 'local'); //local render usage
+      if (cacheHit === undefined) {
+        cb && cb(suggestions); //local render usage
+      }
 
       // callback for transport.get
       function processRemoteData(data) {
@@ -288,7 +293,6 @@ var Dataset = (function() {
           var item = that._transformDatum(datum), isDuplicate;
 
           // checks for duplicates
-          //TODO: add option for enable duplicates for ux?
           if (that.allowDuplicate) {
             suggestions.push(item);
           } else {
@@ -303,8 +307,8 @@ var Dataset = (function() {
           // the remote results and can break out of the each loop
           return suggestions.length < that.limit;
         });
-
-        cb && cb(suggestions);
+        
+        cb && cb(suggestions, 'remote');
       }
     }
   });

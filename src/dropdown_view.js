@@ -259,7 +259,7 @@ var DropdownView = (function() {
         $dataset.show().find('.tt-suggestions').html(fragment);
       }
 
-      // no suggestions to render
+//      // no suggestions to render
       else {
         this.clearSuggestions(dataset.name);
       }

@@ -88,6 +88,10 @@ var InputView = (function() {
 
       else if (!isSameQuery) {
         this.trigger('queryChanged', { value: this.query = inputValue });
+
+        if (this.query.length === 0 && inputValue.length === 0) {
+          this.trigger('queryChangedEmpty', { value: this.query });
+        }
       }
     },
 

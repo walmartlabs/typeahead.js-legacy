@@ -88,9 +88,12 @@ var TypeaheadView = (function() {
     .on('blured', this._closeDropdown)
     .on('blured', this._setInputValueToQuery)
     .on('enterKeyed tabKeyed', this._handleSelection)
+        
     .on('queryChanged', this._clearHint)
-    .on('queryChanged', this._clearSuggestions)
     .on('queryChanged', this._getSuggestions)
+//    .on('queryChanged', this._clearSuggestions)  //removed
+    .on('queryChangedEmpty', this._clearSuggestions)
+
     .on('whitespaceChanged', this._updateHint)
     .on('queryChanged whitespaceChanged', this._openDropdown)
     .on('queryChanged whitespaceChanged', this._setLanguageDirection)
@@ -227,13 +230,32 @@ var TypeaheadView = (function() {
       var that = this, query = this.inputView.getQuery();
 
       if (utils.isBlankString(query)) { return; }
-
+      
       utils.each(this.datasets, function(i, dataset) {
-        dataset.getSuggestions(query, function(suggestions) {
+
+        dataset.getSuggestions(query, function(suggestions, source) {
           // only render the suggestions if the view hasn't
           // been destroyed and if the query hasn't changed
-          if (that.$node && query === that.inputView.getQuery()) {
-            that.dropdownView.renderSuggestions(dataset, suggestions, query);
+
+//          if (that.$node && query === that.inputView.getQuery()) {
+//            that.dropdownView.renderSuggestions(dataset, suggestions, query);
+//          }
+
+          console.log(source, suggestions); //TODO:debug
+
+          if (source === 'remote') {
+            if (suggestions.length) {
+              if (that.$node && query === that.inputView.getQuery()) {
+                that.dropdownView.renderSuggestions(dataset, suggestions, query);
+              }
+            } else {
+              that.dropdownView.clearSuggestions();
+            }
+
+          } else { //local
+            if (that.$node && query === that.inputView.getQuery()) {
+              that.dropdownView.renderSuggestions(dataset, suggestions, query);
+            }
           }
         });
       });

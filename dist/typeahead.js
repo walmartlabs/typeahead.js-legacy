@@ -602,7 +602,7 @@
                 return deferred;
             },
             getSuggestions: function(query, cb) {
-                var that = this, terms, suggestions, cacheHit = false;
+                var that = this, terms, suggestions, cacheHit;
                 if (query.length < this.minLength) {
                     return;
                 }
@@ -611,7 +611,9 @@
                 if (suggestions.length < this.limit && this.transport) {
                     cacheHit = this.transport.get(query, processRemoteData);
                 }
-                !cacheHit && cb && cb(suggestions);
+                if (cacheHit === undefined) {
+                    cb && cb(suggestions);
+                }
                 function processRemoteData(data) {
                     suggestions = suggestions.slice(0);
                     utils.each(data, function(i, datum) {
@@ -626,7 +628,7 @@
                         }
                         return suggestions.length < that.limit;
                     });
-                    cb && cb(suggestions);
+                    cb && cb(suggestions, "remote");
                 }
             }
         });
@@ -695,6 +697,11 @@
                     this.trigger("queryChanged", {
                         value: this.query = inputValue
                     });
+                    if (this.query.length === 0 && inputValue.length === 0) {
+                        this.trigger("queryChangedEmpty", {
+                            value: this.query
+                        });
+                    }
                 }
             },
             destroy: function() {
@@ -1008,7 +1015,7 @@
             this.inputView = new InputView({
                 input: $input,
                 hint: $hint
-            }).on("focused", this._openDropdown).on("blured", this._closeDropdown).on("blured", this._setInputValueToQuery).on("enterKeyed tabKeyed", this._handleSelection).on("queryChanged", this._clearHint).on("queryChanged", this._clearSuggestions).on("queryChanged", this._getSuggestions).on("whitespaceChanged", this._updateHint).on("queryChanged whitespaceChanged", this._openDropdown).on("queryChanged whitespaceChanged", this._setLanguageDirection).on("escKeyed", this._closeDropdown).on("escKeyed", this._setInputValueToQuery).on("tabKeyed upKeyed downKeyed", this._managePreventDefault).on("upKeyed downKeyed", this._moveDropdownCursor).on("upKeyed downKeyed", this._openDropdown).on("tabKeyed leftKeyed rightKeyed", this._autocomplete);
+            }).on("focused", this._openDropdown).on("blured", this._closeDropdown).on("blured", this._setInputValueToQuery).on("enterKeyed tabKeyed", this._handleSelection).on("queryChanged", this._clearHint).on("queryChanged", this._getSuggestions).on("queryChangedEmpty", this._clearSuggestions).on("whitespaceChanged", this._updateHint).on("queryChanged whitespaceChanged", this._openDropdown).on("queryChanged whitespaceChanged", this._setLanguageDirection).on("escKeyed", this._closeDropdown).on("escKeyed", this._setInputValueToQuery).on("tabKeyed upKeyed downKeyed", this._managePreventDefault).on("upKeyed downKeyed", this._moveDropdownCursor).on("upKeyed downKeyed", this._openDropdown).on("tabKeyed leftKeyed rightKeyed", this._autocomplete);
         }
         utils.mixin(TypeaheadView.prototype, EventTarget, {
             _managePreventDefault: function(e) {
@@ -1088,9 +1095,20 @@
                     return;
                 }
                 utils.each(this.datasets, function(i, dataset) {
-                    dataset.getSuggestions(query, function(suggestions) {
-                        if (that.$node && query === that.inputView.getQuery()) {
-                            that.dropdownView.renderSuggestions(dataset, suggestions, query);
+                    dataset.getSuggestions(query, function(suggestions, source) {
+                        console.log(source, suggestions);
+                        if (source === "remote") {
+                            if (suggestions.length) {
+                                if (that.$node && query === that.inputView.getQuery()) {
+                                    that.dropdownView.renderSuggestions(dataset, suggestions, query);
+                                }
+                            } else {
+                                that.dropdownView.clearSuggestions();
+                            }
+                        } else {
+                            if (that.$node && query === that.inputView.getQuery()) {
+                                that.dropdownView.renderSuggestions(dataset, suggestions, query);
+                            }
                         }
                     });
                 });

@@ -398,6 +398,40 @@ describe('Dataset', function() {
       });
     });
 
+
+
+    it('concatenates local and remote results and dedups them', function() {
+      var spy = jasmine.createSpy(),
+          remote = [fixtureDatums[0], fixtureStrings[2]];
+
+      this.dataset.transport.get.andCallFake(function(q, cb) {
+        utils.defer(function() { cb(remote); });
+      });
+
+      this.dataset.getSuggestions('c', spy);
+      
+      console.log(spy.callCount); //TODO:debug
+
+      waitsFor(function() { return spy.callCount === 2; });
+
+      runs(function() {
+        // local suggestions
+        expect(spy.argsForCall[0][0]).toEqual([
+          expectedItemHash.coconut,
+          expectedItemHash.cake,
+          expectedItemHash.coffee
+        ]);
+
+        // local + remote suggestions
+        expect(spy.argsForCall[1][0]).toEqual([
+          expectedItemHash.coconut,
+          expectedItemHash.cake,
+          expectedItemHash.coffee,
+          expectedItemHash.grape
+        ]);
+      });
+    });
+
     it('does not dedup the items when allowDuplicate is set true', function () {
       var spy = jasmine.createSpy(),
           remote = [fixtureDatums[0], fixtureStrings[2]];
@@ -417,36 +451,6 @@ describe('Dataset', function() {
           expectedItemHash.coffee,
           expectedItemHash.grape,
           expectedItemHash.cake
-        ]);
-      });
-    });
-
-    it('concatenates local and remote results and dedups them', function() {
-      var spy = jasmine.createSpy(),
-          remote = [fixtureDatums[0], fixtureStrings[2]];
-
-      this.dataset.transport.get.andCallFake(function(q, cb) {
-        utils.defer(function() { cb(remote); });
-      });
-
-      this.dataset.getSuggestions('c', spy);
-
-      waitsFor(function() { return spy.callCount === 2; });
-
-      runs(function() {
-        // local suggestions
-        expect(spy.argsForCall[0][0]).toEqual([
-          expectedItemHash.coconut,
-          expectedItemHash.cake,
-          expectedItemHash.coffee
-        ]);
-
-        // local + remote suggestions
-        expect(spy.argsForCall[1][0]).toEqual([
-          expectedItemHash.coconut,
-          expectedItemHash.cake,
-          expectedItemHash.coffee,
-          expectedItemHash.grape
         ]);
       });
     });
