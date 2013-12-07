@@ -156,5 +156,7 @@ var utils = {
     return location.protocol;
   },
 
-  noop: function() {}
+  noop: function() {},
+
+  trim: $.trim
 };

@@ -60,9 +60,9 @@ describe('Highlighter', function() {
   });
 
   it('should support pattern to be in arrays', function() {
-    var  before = 'iPhone 5s',
-      after = '<b>iPhone</b> <b>5s</b>',
-      patterns = ['iphone', '5s'];
+    var before = 'iPhone 5s',
+        after = '<b>iPhone</b> <b>5s</b>',
+        patterns = ['iphone', '5s'];
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: patterns});
@@ -70,9 +70,9 @@ describe('Highlighter', function() {
   });
 
   it('should support pattern to have regex chars in the pattern', function() {
-    var  before = 'Dr. Who? *.js',
-      after = '<b>Dr.</b> <b>Who?</b> <b>*.js</b>',
-      patterns = ['Dr.', 'Who?', '*.js'];
+    var before = 'Dr. Who? *.js',
+        after = '<b>Dr.</b> <b>Who?</b> <b>*.js</b>',
+        patterns = ['Dr.', 'Who?', '*.js'];
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: patterns});
@@ -80,9 +80,9 @@ describe('Highlighter', function() {
   });
 
   it('should support tagName to be set', function() {
-    var  before = 'iPhone 5s',
-      after = '<span>iPhone</span> 5s',
-      tagName = 'span';
+    var before = 'iPhone 5s',
+        after = '<span>iPhone</span> 5s',
+        tagName = 'span';
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: this.pattern, tagName: tagName});
@@ -90,19 +90,20 @@ describe('Highlighter', function() {
   });
 
   it('should support className to be set', function() {
-    var  before = 'test iPhone 5s',//w complex example
-      after = 'test <b class=\'blue\'>iPhone</b> 5s',
-      className = 'blue';
+    var before = 'test iPhone 5s',
+        /*jshint quotmark:double */
+        after = "test <b class=\"blue\">iPhone</b> 5s";
+        /*jshint quotmark:single */
+        className = 'blue';
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: this.pattern, className: className});
-//    expect(this.$firstItem.html()).toEqual($(after).html());
-//    expect(this.$firstItem.html()).toEqual($(after).html());
+    expect(this.$firstItem.html()).toEqual(after);
   });
 
   it('should be case insensitive by default', function() {
-    var  before = 'iPhone 5s',
-      after = '<b>iPhone</b> 5s';
+    var before = 'iPhone 5s',
+        after = '<b>iPhone</b> 5s';
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: this.pattern});
@@ -110,20 +111,40 @@ describe('Highlighter', function() {
   });
 
   it('should support caseSensitive to be set true', function() {
-    var  before = 'iPhone 5s',
-      after = 'iPhone 5s';
+    var before = 'iPhone 5s',
+        after = 'iPhone 5s';
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: this.pattern, caseSensitive:true});
     expect(this.$firstItem.html()).toEqual(after);
   });
 
+  it('should trim pattern by default', function () {
+    var before = 'iPhone 5s',
+        after = '<b>iPhone</b> 5s',
+        patternTrim = ' iphone ';
+    this.$firstItem.html(before);
+
+    var highlighter = new Highlighter({el: this.$el, pattern: patternTrim});
+    expect(this.$firstItem.html()).toEqual(after);
+  });
+
+  it('should not trim pattern if allowTrim set to false', function () {
+    var before = 'iPhone 5s',
+        after = 'iPhone 5s',
+        patternTrim = ' iphone ';
+    this.$firstItem.html(before);
+
+    var highlighter = new Highlighter({el: this.$el, pattern: patternTrim, allowTrim: false});
+    expect(this.$firstItem.html()).toEqual(after);
+  });
+
   it('should work with html tags, attributes and comments', function() {
-    var  before = '<span class=\'class\'></span><!-- commment-->',
-    /*jshint quotmark:double */
-      after = "<span class=\"class\"></span><!-- commment-->";
-    /*jshint quotmark:single */
-      patterns = ['span', 'class', 'comment'];
+    var before = '<span class=\'class\'></span><!-- commment-->',
+        /*jshint quotmark:double */
+        after = "<span class=\"class\"></span><!-- commment-->";
+        /*jshint quotmark:single */
+        patterns = ['span', 'class', 'comment'];
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: patterns});
@@ -132,18 +153,12 @@ describe('Highlighter', function() {
 
   it('should work with complex html structures', function() {
     var before = [
-        '<div>abcde',
-          '<span>abcde</span>',
-          '<div><p>abcde</p></div>',
-        '</div>'
-      ].join(''),
-      after = [
-        '<div><b>abc</b>de',
-          '<span><b>abc</b>de</span>',
-          '<div><p><b>abc</b>de</p></div>',
-        '</div>'
-      ].join(''),
-      patterns = 'abc';
+          '<div>abcde', '<span>abcde</span>', '<div><p>abcde</p></div>', '</div>'
+        ].join(''),
+        after = [
+          '<div><b>abc</b>de', '<span><b>abc</b>de</span>', '<div><p><b>abc</b>de</p></div>', '</div>'
+        ].join(''),
+        patterns = 'abc';
     this.$firstItem.html(before);
 
     var highlighter = new Highlighter({el: this.$el, pattern: patterns});

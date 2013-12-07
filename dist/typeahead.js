@@ -132,7 +132,8 @@
         getProtocol: function() {
             return location.protocol;
         },
-        noop: function() {}
+        noop: function() {},
+        trim: $.trim
     };
     var Highlighter = function(jQuery) {
         var defaults = {
@@ -140,7 +141,8 @@
             pattern: null,
             tagName: "b",
             className: null,
-            caseSensitive: false
+            caseSensitive: false,
+            allowTrim: true
         };
         function Highlighter(o) {
             o = utils.mixin({}, defaults, o);
@@ -173,8 +175,11 @@
                 }
             },
             _getRegex: function(patterns) {
-                var patternsEscaped = [];
+                var self = this, patternsEscaped = [];
                 utils.each(patterns, function(index, pattern) {
+                    if (self.o.allowTrim) {
+                        pattern = utils.trim(pattern);
+                    }
                     patternsEscaped.push(utils.escapeRegExChars(pattern));
                 });
                 var expression = "(" + patternsEscaped.join("|") + ")";
