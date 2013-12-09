@@ -439,6 +439,29 @@ describe('Dataset', function() {
       });
     });
 
+    it('does not dedup the items when allowDuplicate is set true', function () {
+      var spy = jasmine.createSpy(),
+          remote = [fixtureDatums[0], fixtureStrings[2]];
+      this.dataset2.transport.get.andCallFake(function (g, cb) {
+        utils.defer(function() { cb(remote); });
+      });
+
+      expect(this.dataset2.allowDuplicate).toEqual(true);
+
+      this.dataset2.getSuggestions('c', spy);
+      waitsFor(function() { return spy.callCount === 2; });
+      runs(function() {
+        // local + remote suggestions
+        expect(spy.argsForCall[1][0]).toEqual([
+          expectedItemHash.coconut,
+          expectedItemHash.cake,
+          expectedItemHash.coffee,
+          expectedItemHash.grape,
+          expectedItemHash.cake
+        ]);
+      });
+    });
+
     it('concatenates local and remote results and dedups them', function() {
       var spy = jasmine.createSpy(),
           remote = [fixtureDatums[0], fixtureStrings[2]];
@@ -465,29 +488,6 @@ describe('Dataset', function() {
           expectedItemHash.cake,
           expectedItemHash.coffee,
           expectedItemHash.grape
-        ]);
-      });
-    });
-
-    it('does not dedup the items when allowDuplicate is set true', function () {
-      var spy = jasmine.createSpy(),
-          remote = [fixtureDatums[0], fixtureStrings[2]];
-      this.dataset2.transport.get.andCallFake(function (g, cb) {
-        utils.defer(function() { cb(remote); });
-      });
-
-      expect(this.dataset2.allowDuplicate).toEqual(true);
-
-      this.dataset2.getSuggestions('c', spy);
-      waitsFor(function() { return spy.callCount === 2; });
-      runs(function() {
-        // local + remote suggestions
-        expect(spy.argsForCall[1][0]).toEqual([
-          expectedItemHash.coconut,
-          expectedItemHash.cake,
-          expectedItemHash.coffee,
-          expectedItemHash.grape,
-          expectedItemHash.cake
         ]);
       });
     });

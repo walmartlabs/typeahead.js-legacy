@@ -232,7 +232,6 @@ var TypeaheadView = (function() {
       if (utils.isBlankString(query)) { return; }
       
       utils.each(this.datasets, function(i, dataset) {
-
         dataset.getSuggestions(query, function(suggestions, remote) {
           // only render the suggestions if the view hasn't
           // been destroyed and if the query hasn't changed
