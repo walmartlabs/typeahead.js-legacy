@@ -14,6 +14,12 @@ And constructed with the following guidelines:
 For more information on semantic versioning, please visit http://semver.org/.
 
 ---
+### Update-3 Dec 9, 2013
+
+* add support for trim options
+* Solve remote fetch dropdown blinking ux issue
+* update unit tests and demo page
+
 ### Update-2 Dec 6, 2013
 
 * add support for allowDuplicate suggestion options (tweaking for new site design implementation)
@@ -31,9 +37,8 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 **Backlog**
 
-* Solve remote fetch dropdown blinking ux issue
 * add options to disable tt-hint
-* performance boost 
+* performance boost (highlighter, hint. etc)
 * Look into Firefox PersistentStorage tests failure issue
 * add some custom event. e.g. typeahead:suggestionsRendered .etc based on the ux
 * Add debug option to output server data

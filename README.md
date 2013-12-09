@@ -5,6 +5,12 @@
 
 Inspired by [twitter.com][twitter]'s autocomplete search functionality, typeahead.js is a fast and [fully-featured][features] autocomplete library.
 
+Demo
+---------------
+To run demo
+grunt dev
+http://localhost:8888/test/demo.html
+
 Getting Started
 ---------------
 
