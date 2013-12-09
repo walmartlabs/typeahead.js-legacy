@@ -65,7 +65,6 @@ var TypeaheadView = (function() {
     this.$node = buildDomStructure(o.input);
     this.datasets = o.datasets;
     this.dir = null;
-
     this.eventBus = o.eventBus;
 
     $menu = this.$node.find('.tt-dropdown-menu');
@@ -88,12 +87,9 @@ var TypeaheadView = (function() {
     .on('blured', this._closeDropdown)
     .on('blured', this._setInputValueToQuery)
     .on('enterKeyed tabKeyed', this._handleSelection)
-        
     .on('queryChanged', this._clearHint)
     .on('queryChanged', this._getSuggestions)
-//    .on('queryChanged', this._clearSuggestions)  //removed
     .on('queryChangedEmpty', this._clearSuggestions)
-
     .on('whitespaceChanged', this._updateHint)
     .on('queryChanged whitespaceChanged', this._openDropdown)
     .on('queryChanged whitespaceChanged', this._setLanguageDirection)
