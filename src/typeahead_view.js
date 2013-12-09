@@ -233,17 +233,10 @@ var TypeaheadView = (function() {
       
       utils.each(this.datasets, function(i, dataset) {
 
-        dataset.getSuggestions(query, function(suggestions, source) {
+        dataset.getSuggestions(query, function(suggestions, remote) {
           // only render the suggestions if the view hasn't
           // been destroyed and if the query hasn't changed
-
-//          if (that.$node && query === that.inputView.getQuery()) {
-//            that.dropdownView.renderSuggestions(dataset, suggestions, query);
-//          }
-
-          console.log(source, suggestions); //TODO:debug
-
-          if (source === 'remote') {
+          if (remote) {
             if (suggestions.length) {
               if (that.$node && query === that.inputView.getQuery()) {
                 that.dropdownView.renderSuggestions(dataset, suggestions, query);
@@ -252,7 +245,7 @@ var TypeaheadView = (function() {
               that.dropdownView.clearSuggestions();
             }
 
-          } else { //local
+          } else {
             if (that.$node && query === that.inputView.getQuery()) {
               that.dropdownView.renderSuggestions(dataset, suggestions, query);
             }

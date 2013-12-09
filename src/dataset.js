@@ -262,13 +262,11 @@ var Dataset = (function() {
     getSuggestions: function(query, cb) {
       var that = this, terms, suggestions, cacheHit;
 
-//      debugger;
-
       // don't do anything until the minLength constraint is met
       if (query.length < this.minLength) {
         return;
       }
-
+      
       terms = utils.tokenizeQuery(query);
       suggestions = this._getLocalSuggestions(terms).slice(0, this.limit);
 
@@ -279,9 +277,8 @@ var Dataset = (function() {
       // if a cache hit occurred, skip rendering local suggestions
       // because the rendering of local/remote suggestions is already
       // in the event loop
-//      !cacheHit && cb && cb(suggestions, 'local'); //local render usage
       if (cacheHit === undefined) {
-        cb && cb(suggestions); //local render usage
+        cb && cb(suggestions);
       }
 
       // callback for transport.get
@@ -308,7 +305,7 @@ var Dataset = (function() {
           return suggestions.length < that.limit;
         });
         
-        cb && cb(suggestions, 'remote');
+        cb && cb(suggestions, true);
       }
     }
   });

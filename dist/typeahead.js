@@ -628,7 +628,7 @@
                         }
                         return suggestions.length < that.limit;
                     });
-                    cb && cb(suggestions, "remote");
+                    cb && cb(suggestions, true);
                 }
             }
         });
@@ -1095,9 +1095,8 @@
                     return;
                 }
                 utils.each(this.datasets, function(i, dataset) {
-                    dataset.getSuggestions(query, function(suggestions, source) {
-                        console.log(source, suggestions);
-                        if (source === "remote") {
+                    dataset.getSuggestions(query, function(suggestions, remote) {
+                        if (remote) {
                             if (suggestions.length) {
                                 if (that.$node && query === that.inputView.getQuery()) {
                                     that.dropdownView.renderSuggestions(dataset, suggestions, query);
