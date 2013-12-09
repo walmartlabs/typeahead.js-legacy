@@ -8,8 +8,8 @@ Inspired by [twitter.com][twitter]'s autocomplete search functionality, typeahea
 Demo
 ---------------
 To run demo
-grunt dev
-http://localhost:8888/test/demo.html
+* grunt dev
+* http://localhost:8888/test/demo.html
 
 Getting Started
 ---------------
