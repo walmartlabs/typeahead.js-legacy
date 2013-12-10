@@ -58,14 +58,15 @@ var TypeaheadView = (function() {
   // -----------
 
   function TypeaheadView(o) {
-    var $menu, $input, $hint;
+    var $menu,
+        $input,
+        $hint;
 
     utils.bindAll(this);
 
     this.$node = buildDomStructure(o.input);
     this.datasets = o.datasets;
     this.dir = null;
-
     this.eventBus = o.eventBus;
 
     $menu = this.$node.find('.tt-dropdown-menu');
@@ -89,8 +90,8 @@ var TypeaheadView = (function() {
     .on('blured', this._setInputValueToQuery)
     .on('enterKeyed tabKeyed', this._handleSelection)
     .on('queryChanged', this._clearHint)
-    .on('queryChanged', this._clearSuggestions)
     .on('queryChanged', this._getSuggestions)
+    .on('queryChangedEmpty', this._clearSuggestions)
     .on('whitespaceChanged', this._updateHint)
     .on('queryChanged whitespaceChanged', this._openDropdown)
     .on('queryChanged whitespaceChanged', this._setLanguageDirection)
@@ -203,8 +204,7 @@ var TypeaheadView = (function() {
 
     _handleSelection: function(e) {
       var byClick = e.type === 'suggestionSelected',
-          suggestion = byClick ?
-            e.data : this.dropdownView.getSuggestionUnderCursor();
+          suggestion = byClick ? e.data : this.dropdownView.getSuggestionUnderCursor();
 
       if (suggestion) {
         this.inputView.setInputValue(suggestion.value);
@@ -224,23 +224,39 @@ var TypeaheadView = (function() {
     },
 
     _getSuggestions: function() {
-      var that = this, query = this.inputView.getQuery();
+      var that = this,
+          query = this.inputView.getQuery();
 
       if (utils.isBlankString(query)) { return; }
-
+      
       utils.each(this.datasets, function(i, dataset) {
-        dataset.getSuggestions(query, function(suggestions) {
+        dataset.getSuggestions(query, function(suggestions, remote) {
           // only render the suggestions if the view hasn't
           // been destroyed and if the query hasn't changed
-          if (that.$node && query === that.inputView.getQuery()) {
-            that.dropdownView.renderSuggestions(dataset, suggestions, query);
+          if (remote) {
+            if (suggestions.length) {
+              if (that.$node && query === that.inputView.getQuery()) {
+                that.dropdownView.renderSuggestions(dataset, suggestions, query);
+              }
+            } else {
+              that.dropdownView.clearSuggestions();
+            }
+
+          } else {
+            if (that.$node && query === that.inputView.getQuery()) {
+              that.dropdownView.renderSuggestions(dataset, suggestions, query);
+            }
           }
         });
       });
     },
 
     _autocomplete: function(e) {
-      var isCursorAtEnd, ignoreEvent, query, hint, suggestion;
+      var isCursorAtEnd,
+          ignoreEvent,
+          query,
+          hint,
+          suggestion;
 
       if (e.type === 'rightKeyed' || e.type === 'leftKeyed') {
         isCursorAtEnd = this.inputView.isCursorAtEnd();

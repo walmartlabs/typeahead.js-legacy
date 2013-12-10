@@ -5,7 +5,8 @@
  */
 
 var PersistentStorage = (function() {
-  var ls, methods;
+  var ls,
+      methods;
 
   try {
     ls = window.localStorage;

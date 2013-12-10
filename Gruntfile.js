@@ -18,6 +18,7 @@ var semver = require('semver'),
 
 module.exports = function(grunt) {
   grunt.initConfig({
+    pkg: require('./package.json'),
     version: grunt.file.readJSON('package.json').version,
 
     buildDir: 'dist',

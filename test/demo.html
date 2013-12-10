@@ -44,11 +44,22 @@
       <form action="" name="searchbar" class="searchbar" method="get">
         <label for="search">Search:</label>
         <input class="searchbar-input js-searchbar-input js-instant-placeholder"
-               type="text" name="search" id="search" placeholder="Search" value="">
-        <input type="hidden" id="searchbar_cat_id"/>
+               type="text" name="search" id="search" placeholder="walmart product" value="" autocomplete="off" spellcheck="false">
         <button type="submit">Search</button>
       </form>
+      <p>(Example: mixer, iphone, tablet)</p>
+    </div>
 
+    <div>
+      <label for="typeahead_local">Local</label>
+      <input type="text" id="typeahead_local" name="typeahead_local" value="" placeholder="fruit"/>
+      <p>(Example: ["apple", "orange", "banana", "fruit"])</p>
+    </div>
+
+    <div>
+      <label for="typeahead_prefetch">Prefetch</label>
+      <input type="text" id="typeahead_prefetch" name="typeahead_prefetch" value="" placeholder="country"/>
+      <p>(Example: United States, China, Japan ..</p>
     </div>
   </div>
 
@@ -80,7 +91,7 @@
        location.href = href;
      });
 
-    //test cases: mixer, tablet, iphone
+    //Demo: Remote jsonp
     $('#search').typeahead({
 //      name:      "walmart", //disable localstorage for now
       template: template,
@@ -96,6 +107,8 @@
         dataType:      "jsonp",
         jsonpCallback: "typeaheadResult",
         cache:         true,
+        timeout: 1500,
+        rateLimitWait: 250,
         filter:        function (parsedResponse) {
           var results = parsedResponse.R;
           var datums = [];
@@ -157,6 +170,20 @@
       .on("typeahead:autocompleted", function (ev) {
         console.log("autocompleted", ev); //TODO:debug
       });
+
+
+    //Demo: local array
+    $("#typeahead_local").typeahead({
+      highlight: true,
+      local: ["apple", "orange", "banana", "fruit"]
+    });
+
+    //Demo: prefetch json
+    $("#typeahead_prefetch").typeahead({
+      highlight: true,
+      prefetch:"data/countries.json",
+      limit: 10
+    });
   </script>
 </body>
 </html>

@@ -73,7 +73,10 @@ var DropdownView = (function() {
     },
 
     _moveCursor: function(increment) {
-      var $suggestions, $cur, nextIndex, $underCursor;
+      var $suggestions,
+          $cur,
+          nextIndex,
+          $underCursor;
 
       // don't bother moving the cursor if the menu is closed or empty
       if (!this.isVisible()) {
@@ -114,12 +117,10 @@ var DropdownView = (function() {
     },
 
     _ensureVisibility: function($el) {
-      var menuHeight = this.$menu.height() +
-          parseInt(this.$menu.css('paddingTop'), 10) +
-          parseInt(this.$menu.css('paddingBottom'), 10),
-        menuScrollTop = this.$menu.scrollTop(),
-        elTop = $el.position().top,
-        elBottom = elTop + $el.outerHeight(true);
+      var menuHeight = this.$menu.height() + parseInt(this.$menu.css('paddingTop'), 10) + parseInt(this.$menu.css('paddingBottom'), 10),
+          menuScrollTop = this.$menu.scrollTop(),
+          elTop = $el.position().top,
+          elBottom = elTop + $el.outerHeight(true);
 
       if (elTop < 0) {
         this.$menu.scrollTop(menuScrollTop + elTop);

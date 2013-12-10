@@ -4,7 +4,8 @@ var Highlighter = (function (jQuery) {
     pattern: null,
     tagName: 'b',
     className: null,
-    caseSensitive: false
+    caseSensitive: false,
+    allowTrim: true
   };
 
   /**
@@ -61,8 +62,12 @@ var Highlighter = (function (jQuery) {
     },
 
     _getRegex: function (patterns) {
-      var patternsEscaped = [];
+      var self = this,
+          patternsEscaped = [];
       utils.each(patterns, function (index, pattern) {
+        if (self.o.allowTrim) {
+          pattern = utils.trim(pattern);
+        }
         patternsEscaped.push(utils.escapeRegExChars(pattern)); //escape Regex character
       });
       var expression = '(' + patternsEscaped.join('|') + ')';
@@ -88,7 +93,6 @@ var Highlighter = (function (jQuery) {
         }
         return !!matches;
       }
-
     }
   });
 

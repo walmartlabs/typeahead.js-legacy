@@ -331,7 +331,6 @@ describe('Dataset', function() {
     describe('when length of query is less than minLength', function() {
       beforeEach(function() {
         this.spy = jasmine.createSpy();
-
         this.dataset = new Dataset({ local: fixtureStrings, minLength: 3 });
         this.dataset.initialize();
       });
@@ -339,6 +338,48 @@ describe('Dataset', function() {
       it('should be a noop', function() {
         this.dataset.getSuggestions('co', this.spy);
         expect(this.spy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when calling remote data', function () {
+      beforeEach(function() {
+        this.spy = jasmine.createSpy();
+        this.dataset = new Dataset({ remote: '/remote' });
+        this.dataset.initialize();
+      });
+
+      it('should call with remote flag', function() {
+        var remote = [fixtureDatums[0], fixtureStrings[2]];
+        this.dataset.transport.get.andCallFake(function(q, cb) {
+          utils.defer(function() {
+            cb(remote);
+          });
+          return false;
+        });
+
+        this.dataset.getSuggestions('c', this.spy);
+        waitsFor(function() { return this.spy.callCount === 1; });
+        runs(function() {
+          expect(this.spy).toHaveBeenCalled();
+          expect(this.spy.argsForCall[0][1]).toEqual(true);
+        });
+      });
+    });
+
+    describe('when calling local data', function(){
+      beforeEach(function() {
+        this.spy = jasmine.createSpy();
+        this.dataset = new Dataset({ local: fixtureStrings });
+        this.dataset.initialize();
+      });
+
+      it('should call without remote flag', function(){
+        this.dataset.getSuggestions('c', this.spy);
+        waitsFor(function() { return this.spy.callCount === 1; });
+        runs(function() {
+          expect(this.spy).toHaveBeenCalled();
+          expect(this.spy.argsForCall[0][1]).toEqual(undefined);
+        });
       });
     });
   });

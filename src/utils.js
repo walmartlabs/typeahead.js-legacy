@@ -91,7 +91,8 @@ var utils = {
   defer: function(fn) { setTimeout(fn, 0); },
 
   debounce: function(func, wait, immediate) {
-    var timeout, result;
+    var timeout,
+        result;
 
     return function() {
       var context = this, args = arguments, later, callNow;
@@ -113,7 +114,12 @@ var utils = {
   },
 
   throttle: function(func, wait) {
-    var context, args, timeout, result, previous, later;
+    var context,
+        args,
+        timeout,
+        result,
+        previous,
+        later;
 
     previous = 0;
     later = function() {
@@ -156,5 +162,7 @@ var utils = {
     return location.protocol;
   },
 
-  noop: function() {}
+  noop: function() {},
+
+  trim: $.trim
 };

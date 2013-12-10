@@ -27,7 +27,8 @@ var EventTarget = (function() {
     },
 
     trigger: function(events, data) {
-      var event, callbacks;
+      var event,
+          callbacks;
 
       if (!this._callbacks) { return this; }
 

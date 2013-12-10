@@ -206,7 +206,7 @@ describe('TypeaheadView', function() {
     });
 
     it('should clear suggestions', function() {
-      this.inputView.trigger('queryChanged');
+      this.inputView.trigger('queryChangedEmpty');
       expect(this.dropdownView.clearSuggestions).toHaveBeenCalled();
     });
 

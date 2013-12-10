@@ -70,7 +70,8 @@ var Transport = (function() {
     },
 
     _sendRequest: function(url) {
-      var that = this, jqXhr = pendingRequests[url];
+      var that = this,
+          jqXhr = pendingRequests[url];
 
       if (!jqXhr) {
         incrementPendingRequests();

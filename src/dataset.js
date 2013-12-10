@@ -150,7 +150,9 @@ var Dataset = (function() {
     },
 
     _processData: function(data) {
-      var that = this, itemHash = {}, adjacencyList = {};
+      var that = this,
+          itemHash = {},
+          adjacencyList = {};
 
       utils.each(data, function(i, datum) {
         var item = that._transformDatum(datum),
@@ -220,7 +222,9 @@ var Dataset = (function() {
 
       // populate suggestions
       utils.each(shortestList, function(i, id) {
-        var item = that.itemHash[id], isCandidate, isMatch;
+        var item = that.itemHash[id],
+            isCandidate,
+            isMatch;
 
         isCandidate = utils.every(lists, function(list) {
           return ~utils.indexOf(list, id);
@@ -260,13 +264,16 @@ var Dataset = (function() {
     },
 
     getSuggestions: function(query, cb) {
-      var that = this, terms, suggestions, cacheHit = false;
+      var that = this,
+          terms,
+          suggestions,
+          cacheHit;
 
       // don't do anything until the minLength constraint is met
       if (query.length < this.minLength) {
         return;
       }
-
+      
       terms = utils.tokenizeQuery(query);
       suggestions = this._getLocalSuggestions(terms).slice(0, this.limit);
 
@@ -277,7 +284,9 @@ var Dataset = (function() {
       // if a cache hit occurred, skip rendering local suggestions
       // because the rendering of local/remote suggestions is already
       // in the event loop
-      !cacheHit && cb && cb(suggestions);
+      if (typeof cacheHit === 'undefined' && cb) {
+        cb(suggestions);
+      }
 
       // callback for transport.get
       function processRemoteData(data) {
@@ -285,17 +294,18 @@ var Dataset = (function() {
 
         // convert remote suggestions to object
         utils.each(data, function(i, datum) {
-          var item = that._transformDatum(datum), isDuplicate;
+          var item = that._transformDatum(datum),
+              isDuplicate;
 
           // checks for duplicates
-          //TODO: add option for enable duplicates for ux?
           if (that.allowDuplicate) {
             suggestions.push(item);
-          } else {
+          }
+
+          else {
             isDuplicate = utils.some(suggestions, function(suggestion) {
               return item.value === suggestion.value;
             });
-
             !isDuplicate && suggestions.push(item);
           }
 
@@ -303,8 +313,8 @@ var Dataset = (function() {
           // the remote results and can break out of the each loop
           return suggestions.length < that.limit;
         });
-
-        cb && cb(suggestions);
+        
+        cb && cb(suggestions, true);
       }
     }
   });
@@ -312,7 +322,8 @@ var Dataset = (function() {
   return Dataset;
 
   function compileTemplate(template, engine, valueKey) {
-    var renderFn, compiledTemplate;
+    var renderFn,
+        compiledTemplate;
 
     // precompiled template
     if (utils.isFunction(template)) {
