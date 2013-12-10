@@ -300,11 +300,12 @@ var Dataset = (function() {
           // checks for duplicates
           if (that.allowDuplicate) {
             suggestions.push(item);
-          } else {
+          }
+
+          else {
             isDuplicate = utils.some(suggestions, function(suggestion) {
               return item.value === suggestion.value;
             });
-
             !isDuplicate && suggestions.push(item);
           }
 

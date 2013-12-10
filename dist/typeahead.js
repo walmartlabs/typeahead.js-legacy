@@ -4,7 +4,6 @@
  * Copyright 2013 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-
 (function($) {
     var VERSION = "0.9.3";
     var utils = {
@@ -1251,4 +1250,3 @@
         };
     })();
 })(window.jQuery);
-//# sourceMappingURL=typeahead.js.map.js

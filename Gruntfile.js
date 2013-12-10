@@ -40,10 +40,7 @@ module.exports = function(grunt) {
         options: {
           mangle: false,
           beautify: true,
-          compress: false,
-          sourceMapRoot: '/',
-          sourceMappingURL: '<%= pkg.name %>.map.js',
-          sourceMap:'dist/<%= pkg.name %>.map.js'
+          compress: false
         },
         src: jsFiles,
         dest: '<%= buildDir %>/typeahead.js'
