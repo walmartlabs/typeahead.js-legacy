@@ -4,6 +4,7 @@
  * Copyright 2013 Twitter, Inc. and other contributors; Licensed MIT
  */
 
+
 (function($) {
     var VERSION = "0.9.3";
     var utils = {
@@ -611,8 +612,8 @@
                 if (suggestions.length < this.limit && this.transport) {
                     cacheHit = this.transport.get(query, processRemoteData);
                 }
-                if (cacheHit === undefined) {
-                    cb && cb(suggestions);
+                if (typeof cacheHit === "undefined" && cb) {
+                    cb(suggestions);
                 }
                 function processRemoteData(data) {
                     suggestions = suggestions.slice(0);
@@ -1250,3 +1251,4 @@
         };
     })();
 })(window.jQuery);
+//# sourceMappingURL=typeahead.js.map.js

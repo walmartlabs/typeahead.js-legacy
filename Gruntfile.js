@@ -18,6 +18,7 @@ var semver = require('semver'),
 
 module.exports = function(grunt) {
   grunt.initConfig({
+    pkg: require('./package.json'),
     version: grunt.file.readJSON('package.json').version,
 
     buildDir: 'dist',
@@ -39,7 +40,10 @@ module.exports = function(grunt) {
         options: {
           mangle: false,
           beautify: true,
-          compress: false
+          compress: false,
+          sourceMapRoot: '/',
+          sourceMappingURL: '<%= pkg.name %>.map.js',
+          sourceMap:'dist/<%= pkg.name %>.map.js'
         },
         src: jsFiles,
         dest: '<%= buildDir %>/typeahead.js'

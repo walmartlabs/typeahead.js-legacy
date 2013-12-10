@@ -5,7 +5,9 @@
  */
 
 (function() {
-  var cache = {}, viewKey = 'ttView', methods;
+  var cache = {},
+      viewKey = 'ttView',
+      methods;
 
   methods = {
     initialize: function(datasetDefs) {
@@ -57,7 +59,8 @@
       return this.each(destroy);
 
       function destroy() {
-        var $this = $(this), view = $this.data(viewKey);
+        var $this = $(this),
+            view = $this.data(viewKey);
 
         if (view) {
           view.destroy();

@@ -150,7 +150,9 @@ var Dataset = (function() {
     },
 
     _processData: function(data) {
-      var that = this, itemHash = {}, adjacencyList = {};
+      var that = this,
+          itemHash = {},
+          adjacencyList = {};
 
       utils.each(data, function(i, datum) {
         var item = that._transformDatum(datum),
@@ -220,7 +222,9 @@ var Dataset = (function() {
 
       // populate suggestions
       utils.each(shortestList, function(i, id) {
-        var item = that.itemHash[id], isCandidate, isMatch;
+        var item = that.itemHash[id],
+            isCandidate,
+            isMatch;
 
         isCandidate = utils.every(lists, function(list) {
           return ~utils.indexOf(list, id);
@@ -260,7 +264,10 @@ var Dataset = (function() {
     },
 
     getSuggestions: function(query, cb) {
-      var that = this, terms, suggestions, cacheHit;
+      var that = this,
+          terms,
+          suggestions,
+          cacheHit;
 
       // don't do anything until the minLength constraint is met
       if (query.length < this.minLength) {
@@ -277,8 +284,8 @@ var Dataset = (function() {
       // if a cache hit occurred, skip rendering local suggestions
       // because the rendering of local/remote suggestions is already
       // in the event loop
-      if (cacheHit === undefined) {
-        cb && cb(suggestions);
+      if (typeof cacheHit === 'undefined' && cb) {
+        cb(suggestions);
       }
 
       // callback for transport.get
@@ -287,7 +294,8 @@ var Dataset = (function() {
 
         // convert remote suggestions to object
         utils.each(data, function(i, datum) {
-          var item = that._transformDatum(datum), isDuplicate;
+          var item = that._transformDatum(datum),
+              isDuplicate;
 
           // checks for duplicates
           if (that.allowDuplicate) {
@@ -313,7 +321,8 @@ var Dataset = (function() {
   return Dataset;
 
   function compileTemplate(template, engine, valueKey) {
-    var renderFn, compiledTemplate;
+    var renderFn,
+        compiledTemplate;
 
     // precompiled template
     if (utils.isFunction(template)) {

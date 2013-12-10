@@ -58,7 +58,9 @@ var TypeaheadView = (function() {
   // -----------
 
   function TypeaheadView(o) {
-    var $menu, $input, $hint;
+    var $menu,
+        $input,
+        $hint;
 
     utils.bindAll(this);
 
@@ -202,8 +204,7 @@ var TypeaheadView = (function() {
 
     _handleSelection: function(e) {
       var byClick = e.type === 'suggestionSelected',
-          suggestion = byClick ?
-            e.data : this.dropdownView.getSuggestionUnderCursor();
+          suggestion = byClick ? e.data : this.dropdownView.getSuggestionUnderCursor();
 
       if (suggestion) {
         this.inputView.setInputValue(suggestion.value);
@@ -223,7 +224,8 @@ var TypeaheadView = (function() {
     },
 
     _getSuggestions: function() {
-      var that = this, query = this.inputView.getQuery();
+      var that = this,
+          query = this.inputView.getQuery();
 
       if (utils.isBlankString(query)) { return; }
       
@@ -250,7 +252,11 @@ var TypeaheadView = (function() {
     },
 
     _autocomplete: function(e) {
-      var isCursorAtEnd, ignoreEvent, query, hint, suggestion;
+      var isCursorAtEnd,
+          ignoreEvent,
+          query,
+          hint,
+          suggestion;
 
       if (e.type === 'rightKeyed' || e.type === 'leftKeyed') {
         isCursorAtEnd = this.inputView.isCursorAtEnd();
