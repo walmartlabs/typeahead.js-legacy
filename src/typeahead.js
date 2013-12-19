@@ -55,6 +55,21 @@
       }
     },
 
+    //TODO: expose closeDropdown API
+    //$.typeahead("close");
+    close: function () {
+      return this.each(close);
+
+      function close() {
+        var $this = $(this),
+            view = $this.data(viewKey);
+
+        if (view) {
+          view.dropdownView.close();
+        }
+      }
+    },
+
     destroy: function() {
       return this.each(destroy);
 

@@ -37,6 +37,7 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 **Backlog**
 
+* fire event open when typeahead opens in $
 * add options to disable tt-hint
 * performance boost (highlighter, hint. etc)
 * Look into Firefox PersistentStorage tests failure issue
