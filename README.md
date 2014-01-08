@@ -5,11 +5,19 @@
 
 Inspired by [twitter.com][twitter]'s autocomplete search functionality, typeahead.js is a fast and [fully-featured][features] autocomplete library.
 
-Demo
+Walmartlabs typeahead dev
 ---------------
 To run demo
 * grunt dev
 * http://localhost:8888/test/demo.html
+
+To run test
+* grunt test:browser or grunt test (run in terminal w PhantomJS )
+* python -m SimpleHTTPServer 8090 to serve the on http://localhost:8090/_SpecRunner.html
+
+To submit PR
+* grunt test to pass all tests
+* grunt lint to pass jshint checks
 
 Getting Started
 ---------------

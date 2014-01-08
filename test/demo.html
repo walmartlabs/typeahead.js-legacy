@@ -41,8 +41,6 @@
 <body>
   <div class="container">
     <div class="typeahead-wrapper">
-      <a id="typeahead_close" href="">close typeahead on hover</a>
-
       <form action="" name="searchbar" class="searchbar" method="get">
         <label for="search">Search:</label>
         <input class="searchbar-input js-searchbar-input js-instant-placeholder"
@@ -50,6 +48,10 @@
         <button type="submit">Search</button>
       </form>
       <p>(Example: mixer, iphone, tablet)</p>
+      <ul>
+        <li><a id="typeahead_close" href="">close typeahead on hover</a></li>
+        <li><a id="typeahead_open" href="">open typeahead on hover (if has data)</a></li>
+      </ul>
     </div>
 
     <div>
@@ -71,7 +73,7 @@
       return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
     }
 
-    var html = "<a> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</a>",
+    var html = "<a href=\"\search\">{{#if category}}{{category}}{{else}}{{value}}{{/if}}</a>",
         template = Handlebars.compile(html),
         $searchbar = $(".searchbar"),
         $searchInput = $(".searchbar-input");
@@ -98,8 +100,8 @@
 //      name:      "walmart", //disable localstorage for now
       template: template,
       engine: Handlebars,
+      limit: 12,
       highlight: true,
-      limit: 10,
       allowDuplicate: true,
       remote:    {
         url:           "http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/",
@@ -109,8 +111,8 @@
         dataType:      "jsonp",
         jsonpCallback: "typeaheadResult",
         cache:         true,
-        timeout: 2500,
-        rateLimitWait: 300,
+        timeout: 2000,
+        rateLimitWait: 250,
         filter:        function (parsedResponse) {
           var results = parsedResponse.R;
           var datums = [];
@@ -150,6 +152,7 @@
         console.log("typeahead:cursorMoved", ev, suggestion); //TODO:debug
       })
       .on("typeahead:selected", function (ev, suggestion) {
+        console.log(1);
         console.log("selected", ev, suggestion); //TODO:debug
 
         if (suggestion.category) {
@@ -175,8 +178,12 @@
     //close typeahead test
     $("#typeahead_close").on("mouseenter", function () {
       $('#search').typeahead("close");
-
     });
+
+    $("#typeahead_open").on("mouseenter", function () {
+      $('#search').typeahead("open");
+    })
+
 
 
     //Demo: local array

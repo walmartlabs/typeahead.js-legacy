@@ -1224,11 +1224,20 @@
                 }
             },
             close: function() {
-                return this.each(close);
-                function close() {
+                return this.each(closeTypeahead);
+                function closeTypeahead() {
                     var $this = $(this), view = $this.data(viewKey);
                     if (view) {
                         view.dropdownView.close();
+                    }
+                }
+            },
+            open: function() {
+                return this.each(openTypeahead);
+                function openTypeahead() {
+                    var $this = $(this), view = $this.data(viewKey);
+                    if (view) {
+                        view.inputView.focus();
                     }
                 }
             },
