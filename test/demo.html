@@ -152,7 +152,6 @@
         console.log("typeahead:cursorMoved", ev, suggestion); //TODO:debug
       })
       .on("typeahead:selected", function (ev, suggestion) {
-        console.log(1);
         console.log("selected", ev, suggestion); //TODO:debug
 
         if (suggestion.category) {
@@ -182,9 +181,7 @@
 
     $("#typeahead_open").on("mouseenter", function () {
       $('#search').typeahead("open");
-    })
-
-
+    });
 
     //Demo: local array
     $("#typeahead_local").typeahead({

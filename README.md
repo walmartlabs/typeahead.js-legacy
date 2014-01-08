@@ -7,6 +7,8 @@ Inspired by [twitter.com][twitter]'s autocomplete search functionality, typeahea
 
 Walmartlabs typeahead dev
 ---------------
+The features/changes have been made is documented in CHANGELOG.md
+
 To run demo
 * grunt dev
 * http://localhost:8888/test/demo.html

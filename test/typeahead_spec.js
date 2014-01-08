@@ -12,7 +12,6 @@ describe('Typeahead', function() {
     });
   });
 
-
   describe('init jQuery plugin', function () {
     it('should add plugin to jQuery', function () {
       expect($).toBeDefined();
