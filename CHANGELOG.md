@@ -14,6 +14,11 @@ And constructed with the following guidelines:
 For more information on semantic versioning, please visit http://semver.org/.
 
 ---
+### Update-4 Jan 8, 2014
+
+* add close & open method in the plugin
+* add unit test to typeahead.js
+
 ### Update-3 Dec 9, 2013
 
 * add support for trim options
@@ -37,6 +42,7 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 **Backlog**
 
+* Check/Look into typeahead.js v0.10 (release in end of Feb.?)
 * add options to disable tt-hint
 * performance boost (highlighter, hint. etc)
 * Look into Firefox PersistentStorage tests failure issue

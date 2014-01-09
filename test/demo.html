@@ -48,6 +48,10 @@
         <button type="submit">Search</button>
       </form>
       <p>(Example: mixer, iphone, tablet)</p>
+      <ul>
+        <li><a id="typeahead_close" href="">close typeahead on hover</a></li>
+        <li><a id="typeahead_open" href="">open typeahead on hover (if has data)</a></li>
+      </ul>
     </div>
 
     <div>
@@ -69,7 +73,7 @@
       return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
     }
 
-    var html = "<p> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</p> ",
+    var html = "<a href=\"\search\">{{#if category}}{{category}}{{else}}{{value}}{{/if}}</a>",
         template = Handlebars.compile(html),
         $searchbar = $(".searchbar"),
         $searchInput = $(".searchbar-input");
@@ -96,8 +100,8 @@
 //      name:      "walmart", //disable localstorage for now
       template: template,
       engine: Handlebars,
+      limit: 12,
       highlight: true,
-      limit: 10,
       allowDuplicate: true,
       remote:    {
         url:           "http://search-cdn.walmart.com/typeahead/v2/142487e83d0c/0/",
@@ -107,7 +111,7 @@
         dataType:      "jsonp",
         jsonpCallback: "typeaheadResult",
         cache:         true,
-        timeout: 1500,
+        timeout: 2000,
         rateLimitWait: 250,
         filter:        function (parsedResponse) {
           var results = parsedResponse.R;
@@ -145,8 +149,8 @@
       }
     })
       .on("typeahead:cursorMoved", function (ev, suggestion) {
+        console.log("typeahead:cursorMoved", ev, suggestion); //TODO:debug
       })
-
       .on("typeahead:selected", function (ev, suggestion) {
         console.log("selected", ev, suggestion); //TODO:debug
 
@@ -157,12 +161,11 @@
         }
         return true; //override default behavior
       })
-
       .on("typeahead:initialized", function (ev) {
         console.log("initialized", ev); //TODO:debug
       })
       .on("typeahead:opened", function (ev) {
-        console.log("initialized", ev); //TODO:debug
+        console.log("opened", ev); //TODO:debug
       })
       .on("typeahead:closed", function (ev) {
         console.log("closed", ev); //TODO:debug
@@ -171,6 +174,14 @@
         console.log("autocompleted", ev); //TODO:debug
       });
 
+    //close typeahead test
+    $("#typeahead_close").on("mouseenter", function () {
+      $('#search').typeahead("close");
+    });
+
+    $("#typeahead_open").on("mouseenter", function () {
+      $('#search').typeahead("open");
+    });
 
     //Demo: local array
     $("#typeahead_local").typeahead({

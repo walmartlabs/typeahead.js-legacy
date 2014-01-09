@@ -55,6 +55,34 @@
       }
     },
 
+    //Change: add close
+    close: function () {
+      return this.each(closeTypeahead);
+
+      function closeTypeahead() {
+        var $this = $(this),
+            view = $this.data(viewKey);
+
+        if (view) {
+          view.dropdownView.close();
+        }
+      }
+    },
+
+    //Change: add open
+    open: function () {
+      return this.each(openTypeahead);
+
+      function openTypeahead() {
+        var $this = $(this),
+          view = $this.data(viewKey);
+
+        if (view) {
+          view.inputView.focus();
+        }
+      }
+    },
+
     destroy: function() {
       return this.each(destroy);
 
