@@ -41,6 +41,8 @@
 <body>
   <div class="container">
     <div class="typeahead-wrapper">
+      <a id="typeahead_close" href="">close typeahead on hover</a>
+
       <form action="" name="searchbar" class="searchbar" method="get">
         <label for="search">Search:</label>
         <input class="searchbar-input js-searchbar-input js-instant-placeholder"
@@ -69,7 +71,7 @@
       return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
     }
 
-    var html = "<p> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</p> ",
+    var html = "<a> {{#if category}}{{category}}{{else}}{{value}}{{/if}}</a>",
         template = Handlebars.compile(html),
         $searchbar = $(".searchbar"),
         $searchInput = $(".searchbar-input");
@@ -107,8 +109,8 @@
         dataType:      "jsonp",
         jsonpCallback: "typeaheadResult",
         cache:         true,
-        timeout: 1500,
-        rateLimitWait: 250,
+        timeout: 2500,
+        rateLimitWait: 300,
         filter:        function (parsedResponse) {
           var results = parsedResponse.R;
           var datums = [];
@@ -145,8 +147,8 @@
       }
     })
       .on("typeahead:cursorMoved", function (ev, suggestion) {
+        console.log("typeahead:cursorMoved", ev, suggestion); //TODO:debug
       })
-
       .on("typeahead:selected", function (ev, suggestion) {
         console.log("selected", ev, suggestion); //TODO:debug
 
@@ -157,12 +159,11 @@
         }
         return true; //override default behavior
       })
-
       .on("typeahead:initialized", function (ev) {
         console.log("initialized", ev); //TODO:debug
       })
       .on("typeahead:opened", function (ev) {
-        console.log("initialized", ev); //TODO:debug
+        console.log("opened", ev); //TODO:debug
       })
       .on("typeahead:closed", function (ev) {
         console.log("closed", ev); //TODO:debug
@@ -170,6 +171,12 @@
       .on("typeahead:autocompleted", function (ev) {
         console.log("autocompleted", ev); //TODO:debug
       });
+
+    //close typeahead test
+    $("#typeahead_close").on("mouseenter", function () {
+      $('#search').typeahead("close");
+
+    });
 
 
     //Demo: local array
