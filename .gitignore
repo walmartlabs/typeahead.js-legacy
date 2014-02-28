@@ -1,6 +1,7 @@
 *.swp
 .DS_Store
 
+.idea/
 .grunt
 _SpecRunner.html
 
