@@ -26,7 +26,7 @@ describe('Typeahead', function() {
 
     it('should be able to setQuery', function () {
       var $dropdownView = this.$fixtures.find('.tt-suggestion');
-      expect($dropdownView.html()).toEqual('<p style="white-space: normal; ">apple</p>');
+      expect($dropdownView.find("p").text()).toEqual('apple');
     });
 
     it('should be able to open', function () {
@@ -40,6 +40,7 @@ describe('Typeahead', function() {
       //then
       expect($dropdownMenu).toHaveCss({display : 'block'});
       expect(this.$searchInput).toBeFocused();
+
     });
 
     it('should be able to close', function () {

@@ -14,6 +14,10 @@ And constructed with the following guidelines:
 For more information on semantic versioning, please visit http://semver.org/.
 
 ---
+### Update-5 Feb 27, 2014
+* disable open dropdown menu on input get focused based on UX request, adjusting code and tests
+* jslint minor fix
+
 ### Update-4 Jan 8, 2014
 
 * add close & open method in the plugin

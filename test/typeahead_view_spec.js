@@ -256,7 +256,7 @@ describe('TypeaheadView', function() {
     });
 
     it('should open the dropdown menu', function() {
-      expect(this.dropdownView.open).toHaveBeenCalled();
+      expect(this.dropdownView.open).not.toHaveBeenCalled();
     });
   });
 
