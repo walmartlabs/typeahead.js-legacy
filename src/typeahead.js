@@ -55,30 +55,17 @@
       }
     },
 
-    //Change: add close
+    //TODO: expose closeDropdown API
+    //$.typeahead("close");
     close: function () {
-      return this.each(closeTypeahead);
+      return this.each(_close);
 
-      function closeTypeahead() {
+      function _close () {
         var $this = $(this),
             view = $this.data(viewKey);
 
         if (view) {
           view.dropdownView.close();
-        }
-      }
-    },
-
-    //Change: add open
-    open: function () {
-      return this.each(openTypeahead);
-
-      function openTypeahead() {
-        var $this = $(this),
-          view = $this.data(viewKey);
-
-        if (view) {
-          view.inputView.focus();
         }
       }
     },

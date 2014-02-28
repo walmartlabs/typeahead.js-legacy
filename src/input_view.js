@@ -66,7 +66,7 @@ var InputView = (function() {
     },
 
     _handleBlur: function() {
-      this.trigger('blured');
+      this.trigger('blurred');
     },
 
     _handleSpecialKeyEvent: function($e) {

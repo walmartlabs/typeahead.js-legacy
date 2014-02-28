@@ -14,10 +14,10 @@ And constructed with the following guidelines:
 For more information on semantic versioning, please visit http://semver.org/.
 
 ---
-### Update-4 Jan 8, 2014
+### Update-4 Feb 27, 2014
 
-* add close & open method in the plugin
-* add unit test to typeahead.js
+* disable open dropdown menu on input get focused based on UX request, adjusting code and tests
+* jslint minor fix
 
 ### Update-3 Dec 9, 2013
 
@@ -42,7 +42,7 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 **Backlog**
 
-* Check/Look into typeahead.js v0.10 (release in end of Feb.?)
+* fire event open when typeahead opens in $
 * add options to disable tt-hint
 * performance boost (highlighter, hint. etc)
 * Look into Firefox PersistentStorage tests failure issue

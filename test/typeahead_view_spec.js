@@ -124,11 +124,11 @@ describe('TypeaheadView', function() {
   // handlers triggered by inputView events
   // --------------------------------------
 
-  describe('when inputView triggers blured', function() {
+  describe('when inputView triggers blurred', function() {
     beforeEach(function() {
       this.inputView.getQuery.andReturn('reset');
 
-      this.inputView.trigger('blured');
+      this.inputView.trigger('blurred');
     });
 
     it('should close dropdown unless mouse is over it', function() {
@@ -255,8 +255,8 @@ describe('TypeaheadView', function() {
       this.inputView.trigger('focused');
     });
 
-    it('should open the dropdown menu', function() {
-      expect(this.dropdownView.open).toHaveBeenCalled();
+    it('should not open the dropdown menu', function() {
+      expect(this.dropdownView.open).not.toHaveBeenCalled();
     });
   });
 
