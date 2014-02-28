@@ -58,9 +58,9 @@
     //TODO: expose closeDropdown API
     //$.typeahead("close");
     close: function () {
-      return this.each(close);
+      return this.each(_close);
 
-      function close() {
+      function _close () {
         var $this = $(this),
             view = $this.data(viewKey);
 

@@ -14,6 +14,11 @@ And constructed with the following guidelines:
 For more information on semantic versioning, please visit http://semver.org/.
 
 ---
+### Update-4 Feb 27, 2014
+
+* disable open dropdown menu on input get focused based on UX request, adjusting code and tests
+* jslint minor fix
+
 ### Update-3 Dec 9, 2013
 
 * add support for trim options

@@ -255,8 +255,8 @@ describe('TypeaheadView', function() {
       this.inputView.trigger('focused');
     });
 
-    it('should open the dropdown menu', function() {
-      expect(this.dropdownView.open).toHaveBeenCalled();
+    it('should not open the dropdown menu', function() {
+      expect(this.dropdownView.open).not.toHaveBeenCalled();
     });
   });
 
