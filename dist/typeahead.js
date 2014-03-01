@@ -681,7 +681,7 @@
                 this.trigger("focused");
             },
             _handleBlur: function() {
-                this.trigger("blured");
+                this.trigger("blurred");
             },
             _handleSpecialKeyEvent: function($e) {
                 var keyName = this.specialKeyCodeMap[$e.which || $e.keyCode];
@@ -1015,7 +1015,7 @@
             this.inputView = new InputView({
                 input: $input,
                 hint: $hint
-            }).on("blured", this._closeDropdown).on("blured", this._setInputValueToQuery).on("enterKeyed tabKeyed", this._handleSelection).on("queryChanged", this._clearHint).on("queryChanged", this._getSuggestions).on("queryChangedEmpty", this._clearSuggestions).on("whitespaceChanged", this._updateHint).on("queryChanged whitespaceChanged", this._openDropdown).on("queryChanged whitespaceChanged", this._setLanguageDirection).on("escKeyed", this._closeDropdown).on("escKeyed", this._setInputValueToQuery).on("tabKeyed upKeyed downKeyed", this._managePreventDefault).on("upKeyed downKeyed", this._moveDropdownCursor).on("upKeyed downKeyed", this._openDropdown).on("tabKeyed leftKeyed rightKeyed", this._autocomplete);
+            }).on("blurred", this._closeDropdown).on("blurred", this._setInputValueToQuery).on("enterKeyed tabKeyed", this._handleSelection).on("queryChanged", this._clearHint).on("queryChanged", this._getSuggestions).on("queryChangedEmpty", this._clearSuggestions).on("whitespaceChanged", this._updateHint).on("queryChanged whitespaceChanged", this._openDropdown).on("queryChanged whitespaceChanged", this._setLanguageDirection).on("escKeyed", this._closeDropdown).on("escKeyed", this._setInputValueToQuery).on("tabKeyed upKeyed downKeyed", this._managePreventDefault).on("upKeyed downKeyed", this._moveDropdownCursor).on("upKeyed downKeyed", this._openDropdown).on("tabKeyed leftKeyed rightKeyed", this._autocomplete);
         }
         utils.mixin(TypeaheadView.prototype, EventTarget, {
             _managePreventDefault: function(e) {
@@ -1072,7 +1072,7 @@
                 this.dropdownView.open();
             },
             _closeDropdown: function(e) {
-                this.dropdownView[e.type === "blured" ? "closeUnlessMouseIsOverDropdown" : "close"]();
+                this.dropdownView[e.type === "blurred" ? "closeUnlessMouseIsOverDropdown" : "close"]();
             },
             _moveDropdownCursor: function(e) {
                 var $e = e.data;

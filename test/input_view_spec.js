@@ -43,12 +43,12 @@ describe('InputView', function() {
 
   describe('when query loses focus', function() {
     beforeEach(function() {
-      this.inputView.on('blured', this.spy = jasmine.createSpy());
+      this.inputView.on('blurred', this.spy = jasmine.createSpy());
 
       this.$input.focus().blur();
     });
 
-    it('should trigger blured', function() {
+    it('should trigger blurred', function() {
       expect(this.spy).toHaveBeenCalled();
     });
   });

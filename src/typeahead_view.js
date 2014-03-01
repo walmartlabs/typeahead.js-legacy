@@ -87,8 +87,8 @@ var TypeaheadView = (function() {
     this.inputView = new InputView({ input: $input, hint: $hint })
       //Comment out focus listener which opens dropdown, to meet the UX need for now, might come back and revisit
       //.on('focused', this._openDropdown)
-    .on('blured', this._closeDropdown)
-    .on('blured', this._setInputValueToQuery)
+    .on('blurred', this._closeDropdown)
+    .on('blurred', this._setInputValueToQuery)
     .on('enterKeyed tabKeyed', this._handleSelection)
     .on('queryChanged', this._clearHint)
     .on('queryChanged', this._getSuggestions)
@@ -190,7 +190,7 @@ var TypeaheadView = (function() {
     },
 
     _closeDropdown: function(e) {
-      this.dropdownView[e.type === 'blured' ?
+      this.dropdownView[e.type === 'blurred' ?
         'closeUnlessMouseIsOverDropdown' : 'close']();
     },
 
