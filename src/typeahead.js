@@ -57,30 +57,28 @@
 
     //Change: add close
     close: function () {
-      return this.each(closeTypeahead);
-
-      function closeTypeahead() {
+      return this.each(function () {
         var $this = $(this),
-            view = $this.data(viewKey);
+          view = $this.data(viewKey);
 
         if (view) {
+          view.inputView.blur();
           view.dropdownView.close();
         }
-      }
+      });
     },
 
     //Change: add open
     open: function () {
-      return this.each(openTypeahead);
-
-      function openTypeahead() {
+      return this.each(function () {
         var $this = $(this),
           view = $this.data(viewKey);
 
         if (view) {
           view.inputView.focus();
+          view.dropdownView.open();
         }
-      }
+      });
     },
 
     destroy: function() {

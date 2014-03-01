@@ -68,6 +68,10 @@
   </div>
 
   <script>
+    //grunt dev
+    //http://localhost:8888/test/demo.html
+    //grunt test:browser
+
     function _encodeQuery (query) {
       //e.g iphone 4 -> iphone_204
       return query.replace(/\./g, "%2E").replace(/'/g, "%27").replace(/\//g, "%2F").replace(/%/g, "_").toLowerCase();
@@ -112,7 +116,7 @@
         jsonpCallback: "typeaheadResult",
         cache:         true,
         timeout: 2000,
-        rateLimitWait: 250,
+        rateLimitWait: 130,
         filter:        function (parsedResponse) {
           var results = parsedResponse.R;
           var datums = [];
