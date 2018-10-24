@@ -365,7 +365,7 @@ Licensed under the MIT License
 [template-engine-compatibility]: #template-engine-compatibility
 
 <!-- links to third party projects -->
-[jasmine]: http://pivotal.github.com/jasmine/
+[jasmine]: https://jasmine.github.io/
 [grunt-cli]: https://github.com/gruntjs/grunt-cli
 [bower]: http://bower.io/
 [jQuery]: http://jquery.com/
